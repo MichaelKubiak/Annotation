@@ -57,4 +57,4 @@ for key, value in proteins.items():
     if i % 100 == 0:
         print("Creating row %d of %d" % (i, len(proteins)))
 
-frame.to_csv(Path.home() + "/Annotation/Data/frame", sep="\t")
+frame.to_csv(str(Path.home()) + "/Annotation/Data/frame", sep="\t")
