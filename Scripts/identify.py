@@ -3,14 +3,13 @@
 # A script to identify Swissprot entries with EC numbers
 # ------------------------------------------------------------------------------------------------------
 
-from pathlib import Path
+from paths import DATA
 import re
-import pandas as pd
 
 # ------------------------------------------------------------------------------------------------------
 # read in files
 
-with open(str(Path.home()) + "/Annotation/Data/enzyme.dat") as efile:
+with open(DATA + "enzyme.dat") as efile:
     enzyme = efile.readlines()
 
 # ------------------------------------------------------------------------------------------------------
@@ -21,9 +20,22 @@ current = ""
 for line in enzyme:
     if line.startswith("ID"):
         current = line.split()[1]
-        ECs[current] = []
     elif line.startswith("DR"):
         for protein in re.finditer(r"\w+,", line):
 
-            ECs[current].append(protein.group().split(",")[0])
+            ECs[protein.group().split(",")[0]] = current
 
+# ------------------------------------------------------------------------------------------------------
+# read in row file from parse_result.py to order list of EC numbers
+
+with open(DATA + "matrix_rows") as rows:
+    order = rows.read().split("\t")
+
+targetlist = []
+for accession in order:
+    try:
+        targetlist.append(ECs[accession])
+    except KeyError:
+        targetlist.append("None")
+
+print(targetlist.count("None")/len(targetlist))

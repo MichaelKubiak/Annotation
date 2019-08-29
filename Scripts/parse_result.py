@@ -3,16 +3,12 @@
 # A script to parse the hmmer results table into a matrix of scores
 # ------------------------------------------------------------------------------------------------------
 
-from pathlib import Path
+from paths import DATA
 import re
 from scipy import sparse
 import numpy as np
 from scipy import io
-# ------------------------------------------------------------------------------------------------------
-# Useful variables
 
-HOME = str(Path.home())
-DATA = HOME + "/Annotation/Data/"
 
 # ------------------------------------------------------------------------------------------------------
 # Make empty sparse matrix
@@ -57,7 +53,7 @@ for score in scores:
 print(mat.data.nbytes)
 io.mmwrite(DATA + "score_matrix")
 with open(DATA + "matrix_rows", "w") as rows, open(DATA + "matrix_columns", "w") as columns:
-    rows.write(str(protein_Accessions))
-    columns.write(str(pfam_Accessions))
+    rows.write("\t".join(protein_Accessions))
+    columns.write("\t".join(pfam_Accessions))
 
 
