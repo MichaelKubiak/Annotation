@@ -52,6 +52,8 @@ for line in result:
 for score in scores:
     mat[protein_Accessions.index(score[0]), pfam_Accessions.index(score[1])] = score[2]
 
+# ------------------------------------------------------------------------------------------------------
+# output matrix and column/row headings
 print(mat.data.nbytes)
 io.mmwrite(DATA + "score_matrix")
 with open(DATA + "matrix_rows", "w") as rows, open(DATA + "matrix_columns", "w") as columns:
