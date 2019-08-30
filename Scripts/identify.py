@@ -39,3 +39,6 @@ for accession in order:
         targetlist.append("None")
 
 print(targetlist.count("None")/len(targetlist))
+
+with open(DATA + "targets", "w") as targets:
+    targets.write("\n".join(targetlist))

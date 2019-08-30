@@ -51,9 +51,9 @@ for score in scores:
 # ------------------------------------------------------------------------------------------------------
 # output matrix and column/row headings
 print(mat.data.nbytes)
-io.mmwrite(DATA + "score_matrix")
+io.mmwrite(DATA + "score_matrix", mat)
 with open(DATA + "matrix_rows", "w") as rows, open(DATA + "matrix_columns", "w") as columns:
-    rows.write("\t".join(protein_Accessions))
-    columns.write("\t".join(pfam_Accessions))
+    rows.write("\n".join(protein_Accessions))
+    columns.write("\n".join(pfam_Accessions))
 
 
