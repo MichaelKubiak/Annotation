@@ -40,5 +40,8 @@ for accession in order:
 
 print(targetlist.count("None")/len(targetlist))
 
+# ------------------------------------------------------------------------------------------------------
+# output a list of EC numbers which matches the order of the proteins in the matrix
+
 with open(DATA + "targets", "w") as targets:
     targets.write("\n".join(targetlist))
