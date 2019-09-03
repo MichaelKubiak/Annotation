@@ -26,10 +26,12 @@ unused = []
 for line in pfam:
     present = False
     for row in results:
-        splitrow = list(filter(None, re.split(r"\s", row)))
-        if splitrow[3].equals(line):
-            present = True
-            break
+        if not row.startswith("#"):
+            splitrow = list(filter(None, re.split(r"\s", row)))
+            if splitrow[3] == line:
+                present = True
+
+                break
     if not present:
         unused.append(line)
 print("Unused HMMs: number = %d %s" % (len(unused), str(unused)))
@@ -44,10 +46,11 @@ unmodelled = []
 for line in swissprot:
     present = False
     for row in results:
-        splitrow=list(filter(None, re.split(r"\s", row)))
-        if splitrow[5].equals(line):
-            present = True
-            break
+        if not row.startswith("#"):
+            splitrow=list(filter(None, re.split(r"\s", row)))
+            if splitrow[5] == line:
+                present = True
+                break
     if not present:
         unmodelled.append(line)
 print("Unrepresented proteins: number = %d %s" % (len(unmodelled), str(unmodelled)))
