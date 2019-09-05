@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass{report}
 
 \usepackage[UKenglish]{babel}
 \usepackage{helvet}
@@ -25,9 +25,13 @@
 	\vspace*{\fill}
 		\begin{center}
 			\huge\textbf{Title}
+
+			\vspace*{2cm}
 			
 			\large\textbf{Author:} Michael Kubiak, University of Leicester
-	
+
+			\vspace*{.5cm}
+
 			\textbf{Date:} \today
 			
 		
@@ -37,31 +41,46 @@
 \pagebreak
 
 	\section*{Abstract}
-
+		
+		
+		
 \pagebreak
 
 	\tableofcontents
 
 \pagebreak
 
-	\section*{Introduction}
-		Protein annotation is a highly important stage of the analysis of organisms.  There are a number of annotation schemes that work for different sets of proteins, including Enzyme commission (EC) number, which classifies enzymes by the reactions that they catalyse.  An EC number has 4 sections, separated by dots, each of which specifies the enzyme function to a greater degree, going from general reaction type down to specific substrate.  
+	\section{Introduction}
+		Protein annotation is a highly important stage of the analysis of organisms.  There are a number of annotation schemes that work for different sets of proteins, including Enzyme commission (EC) number, which classifies enzymes by the reactions that they catalyse, and Gene Ontology (GO) terms, which identify and relate functions of genes and gene products (RNA and proteins) across species.  
 		
-		Another way that proteins are classified is by homology, providing families that evolved from a common ancestor.  Pfam \citep{RefWorks:doc:5d6e641de4b0a51fb0eed90f} holds profile sequences for families of proteins,  
+		The scheme used for this initial foray into function identification by machine learning will be EC numbers, due to their relatively smaller scope (only classifying enzymes).  An EC number has 4 sections, separated by dots, each of which specifies the enzyme function to a greater degree, from general reaction type down to specific substrates. For example, as can be found in \citep{RefWorks:doc:5d70e98ce4b0ef464262611a} and its supplements, an EC number of 1.2.3.4 means that the enzyme is an oxidoreductase, meaning that it catalyses oxidation/reduction, (1) that acts on an aldehyde or oxo group (1.2) with oxygen as the acceptor (1.2.3) acting specifically on an oxalate molecule (1.2.3.4).  Due to their modularity, EC numbers give levels of annotation, allowing predictions to be useful even when they are not fully accurate, or do not specifically place the latter levels of the number.%TODO: more about EC
+		
+		Another way that proteins are classified is by homology, providing families that evolved from a common ancestor.  Pfam \citep{RefWorks:doc:5d6e641de4b0a51fb0eed90f} holds profile sequences and hidden markov models (HMMs) for protein families. These can be used, through programs such as HMMER \citep{RefWorks:doc:5c8f77ece4b077fbbf563f6a}, to determine the likelihood of a protein being a member of a specific family.%TODO: More about Pfam
+		
+		As shown by \citep{RefWorks:doc:5d6f9c26e4b0ec3eed182252} associations between EC number and Pfam family can be identified.  %TODO: why is interesting
+		
+		%TODO: Uni/Swissprot
+		
+		%TODO: Other methods of function prediction
+		
+		%TODO: Uses for functional annotation of proteins
 		
 	\section{Methods}
-			
-			
-				
-							
-				  
+		
+		
+		
 	\section{Results}
+		
 		
 				
 	\section{Conclusion}
 		
+		
+		
 	\section{Future Application}
-			
+		
+		
+		
 \pagebreak
 
 	\bibliography{export.bib}{}
