@@ -2,80 +2,112 @@
 # ------------------------------------------------------------------------------------------------------
 # A script to produce statistics about the data
 # ------------------------------------------------------------------------------------------------------
+# imports
 
 from paths import DATA
 import re
 import concurrent.futures
+import itertools
 
 
 # ------------------------------------------------------------------------------------------------------
-# Calculate percentage non enzyme
-
-with open(DATA + "targets") as tfile:
-    targets = tfile.readlines()
-
-targets = list(map(str.strip, targets))
-
-print("Non-enzyme: %.2f%%" % (targets.count("None")/len(targets)*100))
-
-
 # ------------------------------------------------------------------------------------------------------
-# Function to be multithreaded in next section - finds unused hidden markov models
+# Functions to be multithreaded
+# ------------------------------------------------------------------------------------------------------
+# Find unused hidden markov models
 
 def find_unused(line, results):
     present = False
+    line = line.strip("\n")
     for row in results:
         if not row.startswith("#"):
             splitrow = list(filter(None, re.split(r"\s", row)))
             if splitrow[3] == line:
-                present = True
-
-                break
-    if not present:
-        return line
+                return
+    return line
 
 
 # ------------------------------------------------------------------------------------------------------
-# Find HMMs not represented in Swissprot
-
-with open(DATA + "hmmresult_56000vs1800") as resultsfile, open(DATA + "matrix_columns") as pfamfile:
-    results, pfam = resultsfile.readlines(), pfamfile.readlines()
-
-unused = []
-executor = concurrent.futures.ProcessPoolExecutor(20)
-futures = [executor.submit(find_unused, line, results) for line in pfam]
-concurrent.futures.wait(futures)
-
-for future in futures:
-    unused.append(future.result())
-
-print("Unused HMMs: number = %d %s" % (len(unused), str(unused)))
-
-
-# ------------------------------------------------------------------------------------------------------
-# Function to be multithreaded in next section - finds unmodelled proteins
+# Find unmodelled proteins
 
 def find_unmodelled(line, results):
     present = False
+    line = line.strip("\n")
     for row in results:
         if not row.startswith("#"):
-            splitrow=list(filter(None, re.split(r"\s", row)))
+            splitrow = list(filter(None, re.split(r"\s", row)))
             if splitrow[5] == line:
-                present = True
-                break
-    if not present:
-        return line
+                return
+    return line
 
 
 # ------------------------------------------------------------------------------------------------------
-# Find Proteins not represented by Pfam HMMs
+# run batch
 
-with open(DATA + "matrix_rows") as spfile:
-    swissprot = spfile.readlines()
+def batch(function_name, lines, results):
+    output = []
+    for line in lines:
+        if line is not None:
+            output.append(globals()[function_name](line, results))
+    return output
 
-unmodelled = []
-futures = [executor.submit(find_unmodelled, line, results) for line in swissprot]
-concurrent.futures.wait(futures)
-for future in futures:
-    unmodelled.appen(future.result())
-print("Unrepresented proteins: number = %d %s" % (len(unmodelled), str(unmodelled)))
+
+# ------------------------------------------------------------------------------------------------------
+# itertools recipes grouper
+
+def grouper(iterable, n, fillvalue=None):
+    args = [iter(iterable)] * n
+    return itertools.zip_longest(*args, fillvalue=fillvalue)
+
+
+# ------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------
+
+def main():
+
+    # ------------------------------------------------------------------------------------------------------
+    # Calculate percentage non enzyme
+
+    with open(DATA + "targets") as tfile:
+        targets = tfile.readlines()
+
+    targets = list(map(str.strip, targets))
+
+    print("Non-enzyme: %.2f%%" % (targets.count("None")/len(targets)*100))
+
+    # ------------------------------------------------------------------------------------------------------
+    # Find HMMs not represented in Swissprot
+
+    with open(DATA + "hmmresult_56000vs1800") as resultsfile, open(DATA + "matrix_columns") as pfamfile:
+        results, pfam = resultsfile.readlines(), pfamfile.readlines()
+
+    unused = []
+    executor = concurrent.futures.ProcessPoolExecutor(20)
+    futures = [executor.submit(batch, "find_unused", lines, results) for lines in grouper(pfam, 20)]
+    concurrent.futures.wait(futures)
+
+    for future in futures:
+        unused += future.result()
+
+    print("Unused HMMs: number = %d %s" % (len(unused), str(unused)))
+
+    # ------------------------------------------------------------------------------------------------------
+    # Find Proteins not represented by Pfam HMMs
+
+    with open(DATA + "matrix_rows") as spfile:
+        swissprot = spfile.readlines()
+
+    unmodelled = []
+    futures = [executor.submit(batch, "find_unmodelled", lines, results) for lines in grouper(swissprot, 20)]
+    concurrent.futures.wait(futures)
+    for future in futures:
+        unmodelled.append(future.result())
+
+    print("Unrepresented proteins: number = %d %s" % (len(unmodelled), str(unmodelled)))
+
+# ------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------
+
+
+if __name__ == '__main__':
+    main()

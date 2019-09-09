@@ -1,4 +1,4 @@
-\documentclass{report}
+\documentclass[12pt]{report}
 
 \usepackage[UKenglish]{babel}
 \usepackage{helvet}
@@ -19,6 +19,8 @@
 \usepackage{natbib}
 \setcitestyle{round}
 \setcounter{secnumdepth}{0}
+\usepackage{setspace}
+\onehalfspacing
 
 \begin{document}
 
@@ -53,17 +55,19 @@
 	\section{Introduction}
 		Protein annotation is a highly important stage of the analysis of organisms.  There are a number of annotation schemes that work for different sets of proteins, including Enzyme commission (EC) number, which classifies enzymes by the reactions that they catalyse, and Gene Ontology (GO) terms, which identify and relate functions of genes and gene products (RNA and proteins) across species.  
 		
-		The scheme used for this initial foray into function identification by machine learning will be EC numbers, due to their relatively smaller scope (only classifying enzymes).  An EC number has 4 sections, separated by dots, each of which specifies the enzyme function to a greater degree, from general reaction type down to specific substrates. For example, as can be found in \citep{RefWorks:doc:5d70e98ce4b0ef464262611a} and its supplements, an EC number of 1.2.3.4 means that the enzyme is an oxidoreductase, meaning that it catalyses oxidation/reduction, (1) that acts on an aldehyde or oxo group (1.2) with oxygen as the acceptor (1.2.3) acting specifically on an oxalate molecule (1.2.3.4).  Due to their modularity, EC numbers give levels of annotation, allowing predictions to be useful even when they are not fully accurate, or do not specifically place the latter levels of the number.%TODO: more about EC
+		The scheme used for this initial foray into function identification by machine learning will be EC numbers, due to their relatively smaller scope (only classifying enzymes).  An EC number has 4 sections, separated by dots, each of which specifies the enzyme function to a greater degree, from general reaction type down to specific substrates. For example, as can be found in \citep{RefWorks:doc:5d70e98ce4b0ef464262611a} and its supplements, an EC number of 1.2.3.4 means that the enzyme is an oxidoreductase, meaning that it catalyses oxidation/reduction, (1) that acts on an aldehyde or oxo group (1.2) with oxygen as the electron acceptor for the reaction (1.2.3), and that it the specific molecule that is oxidised is an oxalate molecule (1.2.3.4).  Due to their modularity, EC numbers give levels of annotation, allowing predictions to be useful even when they are not fully accurate, or do not specifically place the specifics of the later levels.
 		
-		Another way that proteins are classified is by homology, providing families that evolved from a common ancestor.  Pfam \citep{RefWorks:doc:5d6e641de4b0a51fb0eed90f} holds profile sequences and hidden markov models (HMMs) for protein families. These can be used, through programs such as HMMER \citep{RefWorks:doc:5c8f77ece4b077fbbf563f6a}, to determine the likelihood of a protein being a member of a specific family.%TODO: More about Pfam
+		Another way that proteins are classified is by homology, providing families that evolved from a common ancestor.  Pfam \citep{RefWorks:doc:5d6e641de4b0a51fb0eed90f} holds profile sequences and hidden markov models (HMMs) for these protein families. These can be used, through programs such as HMMER \citep{RefWorks:doc:5c8f77ece4b077fbbf563f6a}, to determine the likelihood of a protein being a member of a specific family. %TODO: More about Pfam
 		
-		As shown by \citep{RefWorks:doc:5d6f9c26e4b0ec3eed182252} associations between EC number and Pfam family can be identified.  %TODO: why is interesting
+		As shown by \citep{RefWorks:doc:5d6f9c26e4b0ec3eed182252} associations between EC number and Pfam family can be identified.  These associations are interesting for people attempting functional annotation, since Pfam is designed to be searched against.  This, in effect allows a protein to be searched against EC numbers in order to determine the chances of that protein having any given number with an association to Pfam families. %TODO: why is interesting
 		
-		%TODO: Uni/Swissprot
+		Information about known proteins is stored in a database called the UniProt Knowledgebase (UniProtKB).  This information includes annotations, as well as the amino acid sequences of those proteins.  UniProt itself consists of two databases, TrEMBL, which contains the automatically annotated proteins that have not been reviewed, and Swiss-Prot, which contains manually annotated and reviewed proteins.  Over time, papers manually annotating TrEMBL proteins are reviewed by a team and moved into Swiss-Prot.  This means that a piece of functional prediction software can be trained on the current Swiss-Prot database, and tested by prediction of the whole TrEMBL database, part of which prediction can be confirmed by the next release of Swiss-Prot. %TODO: Uni/Swissprot
 		
-		%TODO: Other methods of function prediction
+		Machine learning allows a computer to perform a task and learn from "experience" of that task, so that it can perform better on a future attempt.  This can be performed in a number of ways.  The one discussed in this report will be supervised learning, where a large, representative dataset with known outcomes is used to train a model, that can then be used to predict the outcomes for data outside that initial set.  This is %TODO: Machine Learning - why
 		
-		%TODO: Uses for functional annotation of proteins
+		A number of functional prediction tools have been developed, including ...  There are also tools that predict structure, rather than specifically function, and these have been judged by comptetitions such as CASP (Critical Assessment of Structure Prediction), the most recent of which was CASP13 in 2018, and its more relevant offshoot CAFASP (Critical Assessment of Fully Automated Structure Prediction).  The bodies running these competitions provide a number sequences for which they have annotations, but the groups being tested do not.  The accuracy of the predictions made is then judged, and each tool is given a score based on how it performed.%TODO: Other methods of function prediction
+		
+		Functional prediction is used as a basis for further experimentation and manual annotation, particularly of new species.  While many mammalian proteins can be identified easily based on a few homologs, many newly discovered proteins from other branches of life, do not have any close homologs that can be used to determine their function.  These require more in depth methods to be performed in order to discover their functions.  Functional prediction can be used to inform the targets of these methods, so that, even if a precise function cannot be determined, a particular set of reactions can be investigated as the most likely, based on the predictions made. %TODO: Uses for functional annotation of proteins
 		
 	\section{Methods}
 		
