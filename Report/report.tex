@@ -63,7 +63,7 @@
 		
 		Information about known proteins is stored in a database called the UniProt Knowledgebase (UniProtKB).  This information includes annotations, as well as the amino acid sequences of those proteins.  UniProt itself consists of two databases, TrEMBL, which contains the automatically annotated proteins that have not been reviewed, and Swiss-Prot, which contains manually annotated and reviewed proteins.  Over time, papers manually annotating TrEMBL proteins are reviewed by a team and moved into Swiss-Prot.  This means that a piece of functional prediction software can be trained on the current Swiss-Prot database, and tested by prediction of the whole TrEMBL database, part of which prediction can be confirmed by the next release of Swiss-Prot. %TODO: Uni/Swissprot
 		
-		Machine learning allows a computer to perform a task and learn from "experience" of that task, so that it can perform better on a future attempt.  This can be performed in a number of ways.  The one discussed in this report will be supervised learning, where a large, representative dataset with known outcomes is used to train a model, that can then be used to predict the outcomes for data outside that initial set.  This is %TODO: Machine Learning - why
+		Machine learning allows a computer to perform a task and learn from "experience" of that task, so that it can perform better on a future attempt.  This can be performed in a number of ways.  The one discussed in this report will be supervised learning, where a large, representative dataset with known outcomes is used to train a model, which can then be used to predict the outcomes for data outside that initial set.  This is useful because it reduces the need for hard coded rules that a program must follow, and opens the possibility of patterns of relation that are as yet undiscovered to be found.  In this particular case, the large number of input variables would make hard coding an algorithm to determine EC numbers very time consuming and difficult.  On the other hand, use of a machine learning algorithm to teach the program to determine EC numbers enables the most efficient method of determining this information to be discovered.%TODO: Machine Learning - why
 		
 		A number of functional prediction tools have been developed, including ...  There are also tools that predict structure, rather than specifically function, and these have been judged by comptetitions such as CASP (Critical Assessment of Structure Prediction), the most recent of which was CASP13 in 2018, and its more relevant offshoot CAFASP (Critical Assessment of Fully Automated Structure Prediction).  The bodies running these competitions provide a number sequences for which they have annotations, but the groups being tested do not.  The accuracy of the predictions made is then judged, and each tool is given a score based on how it performed.%TODO: Other methods of function prediction
 		
@@ -83,10 +83,8 @@
 		
 	\section{Future Application}
 		
-		
-		
-\pagebreak
-
+	
+	\fancypagestyle{plain}{}
 	\bibliography{export.bib}{}
 	\bibliographystyle{myplainnat}
 

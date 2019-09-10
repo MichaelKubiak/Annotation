@@ -89,6 +89,9 @@ def main():
     for future in futures:
         unused += future.result()
 
+    while None in unused:
+        unused.remove(None)
+
     print("Unused HMMs: number = %d %s" % (len(unused), str(unused)))
 
     # ------------------------------------------------------------------------------------------------------
@@ -101,7 +104,10 @@ def main():
     futures = [executor.submit(batch, "find_unmodelled", lines, results) for lines in grouper(swissprot, 20)]
     concurrent.futures.wait(futures)
     for future in futures:
-        unmodelled.append(future.result())
+        unmodelled += future.result()
+
+    while None in unmodelled:
+        unmodelled.remove(None)
 
     print("Unrepresented proteins: number = %d %s" % (len(unmodelled), str(unmodelled)))
 
