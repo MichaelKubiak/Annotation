@@ -35,8 +35,8 @@ def find_unmodelled(line, results):
     line = line.strip("\n")
     for row in results:
         if not row.startswith("#"):
-            splitrow = list(filter(None, re.split(r"\s", row)))
-            if splitrow[5] == line:
+            splitrow = list(filter(None, row.split("|")))
+            if splitrow[1] == line:
                 return
     return line
 
@@ -78,7 +78,7 @@ def main():
     # ------------------------------------------------------------------------------------------------------
     # Find HMMs not represented in Swissprot
 
-    with open(DATA + "hmmresult_56000vs1800") as resultsfile, open(DATA + "matrix_columns") as pfamfile:
+    with open(DATA + "hmmresult_full") as resultsfile, open(DATA + "matrix_columns") as pfamfile:
         results, pfam = resultsfile.readlines(), pfamfile.readlines()
 
     unused = []
