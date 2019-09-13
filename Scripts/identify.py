@@ -109,9 +109,10 @@ def main():
         splittarget = target.split("\t")
         for s in splittarget:
             try:
-                targetmatrix[targets.index(target), uniquetargets.index(s)] = 1
+                targetmatrix[targets.index(target), uniquetargets.index(s)] = True
             except ValueError:
                 ...
+    print(targetmatrix)
 
     io.mmwrite(DATA + "target_matrix", targetmatrix)
     with open(DATA + "EC_order", "w") as ECfile:

@@ -5,59 +5,8 @@
 # imports
 
 from paths import DATA
-import re
-import concurrent.futures
-import itertools
-
-
-# ------------------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------------------
-# Functions to be multithreaded
-# ------------------------------------------------------------------------------------------------------
-# Find unused hidden markov models
-
-def find_unused(line, results):
-    present = False
-    line = line.strip("\n")
-    for row in results:
-        if not row.startswith("#"):
-            splitrow = list(filter(None, re.split(r"\s", row)))
-            if splitrow[3] == line:
-                return
-    return line
-
-
-# ------------------------------------------------------------------------------------------------------
-# Find unmodelled proteins
-
-def find_unmodelled(line, results):
-    present = False
-    line = line.strip("\n")
-    for row in results:
-        if not row.startswith("#"):
-            splitrow = list(filter(None, row.split("|")))
-            if splitrow[1] == line:
-                return
-    return line
-
-
-# ------------------------------------------------------------------------------------------------------
-# run batch
-
-def batch(function_name, lines, results):
-    output = []
-    for line in lines:
-        if line is not None:
-            output.append(globals()[function_name](line, results))
-    return output
-
-
-# ------------------------------------------------------------------------------------------------------
-# itertools recipes grouper
-
-def grouper(iterable, n, fillvalue=None):
-    args = [iter(iterable)] * n
-    return itertools.zip_longest(*args, fillvalue=fillvalue)
+from scipy import io
+import numpy as np
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -78,21 +27,24 @@ def main():
     # ------------------------------------------------------------------------------------------------------
     # Find HMMs not represented in Swissprot
 
-    with open(DATA + "hmmresult_full") as resultsfile, open(DATA + "matrix_columns") as pfamfile:
-        results, pfam = resultsfile.readlines(), pfamfile.readlines()
+    scores = io.mmread(DATA + "score_matrix")
+    # transpose the matrix so that the empty columns can be found
+    invscores = scores.transpose()
 
-    unused = []
-    executor = concurrent.futures.ProcessPoolExecutor(20)
-    futures = [executor.submit(batch, "find_unused", lines, results) for lines in grouper(pfam, 20)]
-    concurrent.futures.wait(futures)
+    with open(DATA + "matrix_columns") as pfamfile:
+        pfam = pfamfile.readlines()
 
-    for future in futures:
-        unused += future.result()
+    pfam = list(map(str.strip, pfam))
+    # make array of booleans showing whether there are any non-zero numbers in that row of the transposed matrix
+    used = np.diff(invscores.tocsr().indptr) != 0
 
-    while None in unused:
-        unused.remove(None)
+    unused = np.where(used == False)
 
-    print("Unused HMMs: number = %d %s" % (len(unused), str(unused)))
+    unusedhmm = []
+    for col in unused[0]:
+        unusedhmm.append(pfam[col])
+
+    print("Unused HMMs: number = %d %s" % (len(unused), str(unusedhmm)))
 
     # ------------------------------------------------------------------------------------------------------
     # Find Proteins not represented by Pfam HMMs
@@ -100,16 +52,17 @@ def main():
     with open(DATA + "matrix_rows") as spfile:
         swissprot = spfile.readlines()
 
-    unmodelled = []
-    futures = [executor.submit(batch, "find_unmodelled", lines, results) for lines in grouper(swissprot, 20)]
-    concurrent.futures.wait(futures)
-    for future in futures:
-        unmodelled += future.result()
+    swissprot = list(map(str.strip, swissprot))
 
-    while None in unmodelled:
-        unmodelled.remove(None)
+    modelled = np.diff(scores.tocsr().indptr) != 0
 
-    print("Unrepresented proteins: number = %d %s" % (len(unmodelled), str(unmodelled)))
+    unmodelled = np.where(modelled == False)
+
+    unmodelledprotein = []
+    for row in unmodelled[0]:
+        unmodelledprotein.append(swissprot[row])
+
+    print("Unrepresented proteins: number = %d %s" % (len(unmodelledprotein), str(unmodelledprotein)))
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
