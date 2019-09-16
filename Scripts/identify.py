@@ -7,7 +7,6 @@ from paths import DATA
 import re
 import numpy as np
 from scipy import sparse
-from scipy import io
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -103,18 +102,15 @@ def main():
     uniquetargets = uniquetargets[uniquetargets != ""]
     uniquetargets = uniquetargets.tolist()
 
-    targetmatrix = sparse.lil_matrix((len(targets), len(uniquetargets)), dtype=np.int8)
+    targetmatrix = sparse.lil_matrix((len(targets), len(uniquetargets)), dtype=np.bool)
 
     for target in targets:
         splittarget = target.split("\t")
         for s in splittarget:
-            try:
+            if target != "None":
                 targetmatrix[targets.index(target), uniquetargets.index(s)] = True
-            except ValueError:
-                ...
-    print(targetmatrix)
 
-    io.mmwrite(DATA + "target_matrix", targetmatrix)
+    np.savez(DATA + "target_matrix", targetmatrix)
     with open(DATA + "EC_order", "w") as ECfile:
         for target in uniquetargets:
             ECfile.write(target + "\n")

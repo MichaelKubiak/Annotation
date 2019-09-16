@@ -3,19 +3,19 @@
 # ------------------------------------------------------------------------------------------------------
 # imports
 
-from scipy import io
 import numpy as np
 from paths import DATA
 from sklearn.model_selection import train_test_split
+
 # ------------------------------------------------------------------------------------------------------
 # read files
 
-scores = io.mmread(DATA + "score_matrix").tocsr()
+scores = np.load(DATA + "score_matrix").tocsr()
 # proteins are on rows in both cases
 with open(DATA + "matrix_rows") as protein_accessions, open(DATA + "matrix_columns") as pfam_accessions, open(DATA + "EC_order") as EC_order:
     proteins, pfam, ECs = protein_accessions.readlines(), pfam_accessions.readlines(), EC_order.readlines()
 
-targets = io.mmread(DATA + "target_matrix.mtx").astype(np.bool).todense()
+targets = np.load(DATA + "target_matrix.mtx").todense()
 
 # find rows with only 0s
 modelled = np.diff(scores.tocsr().indptr) != 0

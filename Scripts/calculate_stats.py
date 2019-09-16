@@ -21,7 +21,7 @@ def main():
         targets = tfile.readlines()
 
     targets = list(map(str.strip, targets))
-
+    print(targets.count("None"))
     print("Non-enzyme: %.2f%%" % (targets.count("None")/len(targets)*100))
 
     # ------------------------------------------------------------------------------------------------------

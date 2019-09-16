@@ -7,7 +7,6 @@ from paths import DATA
 import re
 from scipy import sparse
 import numpy as np
-from scipy import io
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -54,7 +53,7 @@ def main():
     # ------------------------------------------------------------------------------------------------------
     # output matrix and column/row headings
     print(mat.data.nbytes)
-    io.mmwrite(DATA + "score_matrix", mat)
+    np.savez(DATA + "score_matrix", mat)
     with open(DATA + "matrix_rows", "w") as rows, open(DATA + "matrix_columns", "w") as columns:
         rows.write("\n".join(protein_Accessions))
         columns.write("\n".join(pfam_Accessions))
