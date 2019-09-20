@@ -53,7 +53,7 @@ def main():
     # ------------------------------------------------------------------------------------------------------
     # output matrix and column/row headings
     print(mat.data.nbytes)
-    np.savez(DATA + "score_matrix", mat)
+    sparse.save_npz(DATA + "score_matrix", mat.tocsr())
     with open(DATA + "matrix_rows", "w") as rows, open(DATA + "matrix_columns", "w") as columns:
         rows.write("\n".join(protein_Accessions))
         columns.write("\n".join(pfam_Accessions))

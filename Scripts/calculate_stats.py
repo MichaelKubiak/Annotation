@@ -5,7 +5,7 @@
 # imports
 
 from paths import DATA
-from scipy import io
+from scipy import sparse
 import numpy as np
 
 
@@ -27,7 +27,7 @@ def main():
     # ------------------------------------------------------------------------------------------------------
     # Find HMMs not represented in Swissprot
 
-    scores = io.mmread(DATA + "score_matrix")
+    scores = sparse.load_npz(DATA + "score_matrix.npz")
     # transpose the matrix so that the empty columns can be found
     invscores = scores.transpose()
 
@@ -44,7 +44,7 @@ def main():
     for col in unused[0]:
         unusedhmm.append(pfam[col])
 
-    print("Unused HMMs: number = %d %s" % (len(unused), str(unusedhmm)))
+    print("Unused HMMs: number = %d %s" % (len(unusedhmm), str(unusedhmm)))
 
     # ------------------------------------------------------------------------------------------------------
     # Find Proteins not represented by Pfam HMMs

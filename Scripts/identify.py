@@ -104,13 +104,13 @@ def main():
 
     targetmatrix = sparse.lil_matrix((len(targets), len(uniquetargets)), dtype=np.bool)
 
-    for target in targets:
-        splittarget = target.split("\t")
+    for i in range(len(targets)):
+        splittarget = targets[i].split("\t")
         for s in splittarget:
-            if target != "None":
-                targetmatrix[targets.index(target), uniquetargets.index(s)] = True
+            if s != "None":
+                targetmatrix[i, uniquetargets.index(s)] = True
 
-    np.savez(DATA + "target_matrix", targetmatrix)
+    sparse.save_npz(DATA + "target_matrix", targetmatrix.tocsr())
     with open(DATA + "EC_order", "w") as ECfile:
         for target in uniquetargets:
             ECfile.write(target + "\n")
