@@ -19,6 +19,7 @@ with open(DATA + "matrix_rows") as protein_accessions, open(DATA + "matrix_colum
 
 targets = sparse.load_npz(DATA + "target_matrix.npz").todense()
 
+'''
 print("Percentage empty rows in target matrix before pruning: %.2f%%" % (100*np.sum(~targets.any(1))/targets.shape[0]))
 # find rows with only 0s
 modelled = np.diff(scores.indptr) != 0
@@ -62,3 +63,4 @@ print("Percentage empty rows in target matrix after further pruning: %.2f%%" % (
 #X_train, X_test, y_train, y_test = train_test_split(scores, targets, test_size=.3, random_state=1, stratify=targets)
 
 # RAM required, smaller sample test set
+'''

@@ -11,7 +11,7 @@ from scipy import sparse
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
-# function to make a dictionary of EC numbers and the IDs of proteins of that classification
+# function to make a dictionary of protein IDs and the EC numbers of those proteins
 
 def get_ECs(enzyme):
     ECs = {}
