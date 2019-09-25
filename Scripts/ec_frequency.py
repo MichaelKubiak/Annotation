@@ -53,16 +53,26 @@ def main():
 
     brackets = get_brackets(ECs, x)
 
-    print(brackets)
-    a = [0] + list(x ** n for n in range(12))
-    print(a)
+    t = "bar"
 
-    plt.plot(a, brackets)
-    plt.xscale('symlog', basex = x)
+    if t == "line":
+        a = [0] + list(x ** n for n in range(12))
 
-    plt.gca().xaxis.set_major_formatter(ScalarFormatter())
-    plt.show()
 
+        plt.plot(a, brackets)
+        plt.xscale('symlog', basex=x)
+
+        plt.gca().xaxis.set_major_formatter(ScalarFormatter())
+        plt.show()
+    elif t == "bar":
+        labels = ["0", "1"] + list("%d - %d" % (x ** n, x ** (n+1)-1) for n in range(1, 12))
+        xpos = range(0, 13)
+
+        plt.bar(xpos, brackets, edgecolor="black")
+        plt.xticks(xpos, labels, rotation=10)
+        plt.xlabel("Number of Annotated Proteins")
+        plt.ylabel("Number of EC Classifications")
+        plt.show()
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------

@@ -83,7 +83,7 @@ def main():
 
     # ------------------------------------------------------------------------------------------------------
     # output a sparse matrix with proteins as rows, and EC numbers as columns
-    # maybe unnecessary
+
     targets = outstring.split("\n")
     uniquetargets = np.unique(targets)
 
