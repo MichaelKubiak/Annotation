@@ -2,6 +2,7 @@
 # ------------------------------------------------------------------------------------------------------
 # A script to identify Swissprot entries with EC numbers
 # ------------------------------------------------------------------------------------------------------
+# Imports
 
 from paths import DATA
 import re
@@ -11,7 +12,7 @@ from scipy import sparse
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
-# function to make a dictionary of protein IDs and the EC numbers of those proteins
+# Function to make a dictionary of protein IDs and the EC numbers of those proteins
 
 def get_ECs(enzyme):
     ECs = {}
@@ -29,7 +30,7 @@ def get_ECs(enzyme):
 
 
 # ------------------------------------------------------------------------------------------------------
-# function to get a list of the EC numbers for each protein in the same order as they are in the score matrix
+# Function to get a list of the EC numbers for each protein in the same order as they are in the score matrix
 
 def get_targetlist(ECs, order):
     targetlist = []
@@ -48,26 +49,26 @@ def get_targetlist(ECs, order):
 def main():
 
     # ------------------------------------------------------------------------------------------------------
-    # read in files
+    # Read in files
 
     with open(DATA + "enzyme.dat") as efile:
         enzyme = efile.readlines()
 
+    with open(DATA+"matrix_rows") as rows:
+        order = rows.readlines()
+
     # ------------------------------------------------------------------------------------------------------
-    # get a dictionary of EC numbers and the IDs of proteins of that classification
+    # Get a dictionary of EC numbers and the IDs of proteins of that classification
 
     ECs = get_ECs(enzyme)
 
     # ------------------------------------------------------------------------------------------------------
-    # read in row file from parse_result.py to order list of EC numbers
-
-    with open(DATA + "matrix_rows") as rows:
-        order = rows.readlines()
+    # Order list of EC numbers from row file
 
     targetlist = get_targetlist(ECs, order)
 
     # ------------------------------------------------------------------------------------------------------
-    # output a list of EC numbers which matches the order of the proteins in the matrix
+    # Output a list of EC numbers which matches the order of the proteins in the matrix
 
     outstring = ""
     for target in targetlist:
@@ -84,44 +85,45 @@ def main():
         targets.write(outstring)
 
     # ------------------------------------------------------------------------------------------------------
-    # output a sparse matrix with proteins as rows, and EC numbers as columns
+    # Output a sparse matrix with proteins as rows, and EC numbers as columns
 
-    # split the list into targets for each protein
+    # Split the list into targets for each protein
     targets = outstring.split("\n")
-    # remove all repeated targets
+
+    # Remove all repeated targets
     uniquetargets = np.unique(targets)
 
-    # find targets with multiple constituents
+    # Find targets with multiple constituents
     rem = []
     for target in uniquetargets:
         if re.search("\t", target):
             rem.append(target)
             splittarget = target.split("\t")
-            # add the constituents to the list if they are not already present
+            # Add the constituents to the list if they are not already present
             for sep in splittarget:
                 if not sep in uniquetargets:
                     uniquetargets = np.append(uniquetargets, sep)
 
-    # remove the multiple constituent targets that have been found
+    # Remove the multiple constituent targets that have been found
     for r in rem:
         uniquetargets = uniquetargets[uniquetargets != r]
-    # remove useless targets from the list from the list of targets
+    # Remove useless targets from the list from the list of targets
     uniquetargets = uniquetargets[uniquetargets != "None"]
     uniquetargets = uniquetargets[uniquetargets != ""]
     uniquetargets = uniquetargets.tolist()
 
-    # create an empty, sparse boolean matrix of the correct dimensions using the scipy.sparse module
+    # Create an empty, sparse boolean matrix of the correct dimensions using the scipy.sparse module
     targetmatrix = sparse.lil_matrix((len(targets), len(uniquetargets)), dtype=np.bool)
 
-    # fill in the sparse matrix with targets for each protein
+    # Fill in the sparse matrix with targets for each protein
     for i in range(len(targets)):
         splittarget = targets[i].split("\t")
         for s in splittarget:
             if s != "None":
-                # add true at the correct positions of the matrix
+                # Add true at the correct positions of the matrix
                 targetmatrix[i, uniquetargets.index(s)] = True
 
-    # output the matrix as a .npz file, along with the list of targets that are in the correct order
+    # Output the matrix as a .npz file, along with the list of targets that are in the correct order
     sparse.save_npz(DATA + "target_matrix", targetmatrix.tocsr())
 
     with open(DATA + "EC_order", "w") as ECfile:
