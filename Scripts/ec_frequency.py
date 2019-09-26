@@ -6,6 +6,7 @@ from paths import DATA
 import re
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
+import frequency_bars as fb
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -68,11 +69,9 @@ def main():
         labels = ["0", "1"] + list("%d - %d" % (x ** n, x ** (n+1)-1) for n in range(1, 12))
         xpos = range(0, 13)
 
-        plt.bar(xpos, brackets, edgecolor="black")
-        plt.xticks(xpos, labels, rotation=10)
-        plt.xlabel("Number of Annotated Proteins")
-        plt.ylabel("Number of EC Classifications")
-        plt.show()
+        fb.freq_bars(brackets, labels, xpos, "linear", "Number of Annotated Proteins", "Number of EC Classifications")
+
+
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------

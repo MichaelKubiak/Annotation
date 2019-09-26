@@ -71,8 +71,10 @@ def main():
 
     outstring = ""
     for target in targetlist:
+        # separate the EC lists of proteins by a newline (splits sometimes leave extra empty strings when splitting on whitespace characters)
         if outstring != "":
             outstring += "\n"
+        # add the EC list for the current protein, joining multiples by a tab character
         if target == "None":
             outstring += target
         else:
@@ -84,40 +86,52 @@ def main():
     # ------------------------------------------------------------------------------------------------------
     # output a sparse matrix with proteins as rows, and EC numbers as columns
 
+    # split the list into targets for each protein
     targets = outstring.split("\n")
+    # remove all repeated targets
     uniquetargets = np.unique(targets)
 
+    # find targets with multiple constituents
     rem = []
     for target in uniquetargets:
         if re.search("\t", target):
             rem.append(target)
             splittarget = target.split("\t")
+            # add the constituents to the list if they are not already present
             for sep in splittarget:
                 if not sep in uniquetargets:
                     uniquetargets = np.append(uniquetargets, sep)
 
+    # remove the multiple constituent targets that have been found
     for r in rem:
         uniquetargets = uniquetargets[uniquetargets != r]
+    # remove useless targets from the list from the list of targets
     uniquetargets = uniquetargets[uniquetargets != "None"]
     uniquetargets = uniquetargets[uniquetargets != ""]
     uniquetargets = uniquetargets.tolist()
 
+    # create an empty, sparse boolean matrix of the correct dimensions using the scipy.sparse module
     targetmatrix = sparse.lil_matrix((len(targets), len(uniquetargets)), dtype=np.bool)
 
+    # fill in the sparse matrix with targets for each protein
     for i in range(len(targets)):
         splittarget = targets[i].split("\t")
         for s in splittarget:
             if s != "None":
+                # add true at the correct positions of the matrix
                 targetmatrix[i, uniquetargets.index(s)] = True
 
+    # output the matrix as a .npz file, along with the list of targets that are in the correct order
     sparse.save_npz(DATA + "target_matrix", targetmatrix.tocsr())
+
     with open(DATA + "EC_order", "w") as ECfile:
         for target in uniquetargets:
             ECfile.write(target + "\n")
 
+
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
 
-
+# Don't run if imported
 if __name__ == '__main__':
     main()
