@@ -31,8 +31,21 @@ def main():
 
     print("Percentage empty rows in target matrix before pruning: %.2f%%" % (prep.get_empty(targets)))
 
+    # ------------------------------------------------------------------------------------------------------
+    # remove proteins with no pfam hits
 
-    prep.remove_non_family(scores, targets)
+    scores, targets = prep.remove_non_family(scores, targets)
+
+    print("Percentage empty rows in target matrix after pruning: %.2f%%" % (prep.get_empty(targets)))
+
+    # ------------------------------------------------------------------------------------------------------
+    # remove non-enzyme proteins down to a limit
+
+    # limit = 0.2
+    #
+    # scores, targets = prep.remove_non_enzyme(scores, targets, limit)
+    #
+    # print("Percentage empty rows in target matrix after removal of empty rows down to %d: %.2f%%" % (limit, prep.get_empty(targets)))
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
 
