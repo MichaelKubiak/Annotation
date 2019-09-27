@@ -1,6 +1,4 @@
-#! /usr/bin/env python3
-# ------------------------------------------------------------------------------------------------------
-# Script to teach the network to determine EC numbers
+# Module for preparing the data to be learned from
 # ------------------------------------------------------------------------------------------------------
 # imports
 
