@@ -10,7 +10,7 @@ A variable containing the path to the data folder
 
 A function to draw consistent bar charts
 
-#### get_test.py
+#### test_data.py
 
 Functions to produce a test dataset
 
@@ -33,7 +33,7 @@ Downloads the data files:
 
 - Pfam-A.hmm          - containing the hidden markov models from Pfam A
                          
-- enzyme.data         - containing the EC numbers and which proteins are members of those groups
+- enzyme.dat          - containing the EC numbers and which proteins are members of those groups
                          
 - uniprot_sprot.fasta - containing the sequences of the proteins in swissprot
 
