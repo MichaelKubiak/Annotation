@@ -2,39 +2,32 @@
 # ------------------------------------------------------------------------------------------------------
 # imports
 
-from scipy import sparse
 import numpy as np
-from paths import DATA
-from sklearn.model_selection import train_test_split
+
 
 # ------------------------------------------------------------------------------------------------------
-# read files
+# ------------------------------------------------------------------------------------------------------
+# Function to return the percentage of empty rows in a matrix
 
-scores = sparse.load_npz(DATA + "score_matrix.npz")
-# proteins are on rows in both cases
-with open(DATA + "matrix_rows") as protein_accessions, open(DATA + "matrix_columns") as pfam_accessions, open(DATA + "EC_order") as EC_order:
-    proteins, pfam, ECs = protein_accessions.readlines(), pfam_accessions.readlines(), EC_order.readlines()
-
-targets = sparse.load_npz(DATA + "target_matrix.npz").todense()
+def get_empty(matrix):
+    return 100*np.sum(~matrix.any(1))/matrix.shape[0]
 
 
-print("Percentage empty rows in target matrix before pruning: %.2f%%" % (100*np.sum(~targets.any(1))/targets.shape[0]))
-# find rows with only 0s
-modelled = np.diff(scores.indptr) != 0
+# ------------------------------------------------------------------------------------------------------
+# Function to remove proteins that are not hit by any pfam hmms from both matrices
+def remove_non_family(scores, targets):
+    # Find rows with only 0s
+    modelled = np.diff(scores.indptr) != 0
+    unmodelled = np.where(modelled == False)
+    # remove rows and columns with only 0s
+    scores = scores[scores.getnnz(1) > 0][:, scores.getnnz(0)>0]
+    # remove those rows from targets
+    targets = np.delete(targets, unmodelled[0], axis=0)
+    return scores, targets
 
-unmodelled = np.where(modelled == False)
-
-# remove rows and columns with only 0s
-scores = scores[scores.getnnz(1) > 0][:, scores.getnnz(0) > 0]
-
-# remove those rows from targets
-targets = np.delete(targets, unmodelled[0], axis=0)
 
 print("Percentage empty rows in target matrix after pruning: %.2f%%" % (100*np.sum(~targets.any(1))/targets.shape[0]))
 
-proteins = list(map(str.strip, proteins))
-pfam = list(map(str.strip, pfam))
-ECs = list(map(str.strip, ECs))
 
 i = 0
 while np.sum(~targets.any(1))/targets.shape[0] > 0.2:
