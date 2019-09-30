@@ -35,6 +35,21 @@ def get_indices(matrix, namelist):
 
 
 # ------------------------------------------------------------------------------------------------------
+# Function to check whether the rows of a matrix corresponding to a list of values contain values
+
+def check_targets(p, targets):
+    zeros = 0
+    nonzeros = 0
+    for index in p:
+        # Check whether the row of targets corresponding to the index has any non zero values, and add one to whichever counter is correct
+        if targets[index].nnz == 0:
+            zeros += 1
+        else:
+            nonzeros += 1
+    return nonzeros, zeros
+
+
+# ------------------------------------------------------------------------------------------------------
 # Function to produce ratios of enzymes to non enzymes for each entry in a dictionary of indices
 
 def get_ratios(indices, targets):
@@ -45,14 +60,7 @@ def get_ratios(indices, targets):
 
     # hmm contains a key, p contains the value
     for hmm, p in indices.items():
-        zeros = 0
-        nonzeros = 0
-        for index in p:
-            # Check whether the row of targets corresponding to the index has any non zero values, and add one to whichever counter is correct
-            if targets[index].nnz == 0:
-                zeros += 1
-            else:
-                nonzeros += 1
+        nonzeros, zeros = check_targets(p, targets)
         # if both counters are 0, the hmm did not hit any proteins
         if zeros == 0 and nonzeros == 0:
             nohits += 1
@@ -69,6 +77,7 @@ def get_ratios(indices, targets):
             ratios.append(nonzeros/zeros)
     #        print("%s has %d hits with EC numbers and %d hits with no EC numbers, giving a ratio of %.2f" % (hmm, nonzeros, zeros, (nonzeros/zeros)))
     return nohits, nonenzyme, ratios, enzyme
+
 
 
 # ------------------------------------------------------------------------------------------------------

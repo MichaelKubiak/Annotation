@@ -34,7 +34,6 @@ def remove_non_family(scores, targets):
 # ------------------------------------------------------------------------------------------------------
 # Function to remove proteins with no EC number down to a specified limit
 
-
 def remove_non_enzyme(targets, scores, limit):
     i = 0
     # While the ratio of empty rows in target is greater than the limit

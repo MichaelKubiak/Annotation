@@ -27,12 +27,9 @@ def main():
     targets = sparse.load_npz(DATA + "target_matrix.npz").todense()
 
     # ------------------------------------------------------------------------------------------------------
-    # Print percentage of empty rows in the target matrix
+    # Remove proteins with no pfam hits
 
-    print("Percentage empty rows in target matrix before pruning: %.2f%%" % (prep.get_empty(targets)))
-
-    # ------------------------------------------------------------------------------------------------------
-    # remove proteins with no pfam hits
+    print("Percentage empty rows in target matrix before pruning: %.2f%%"%(prep.get_empty(targets)))
 
     scores, targets = prep.remove_non_family(scores, targets)
 
