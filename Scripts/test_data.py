@@ -50,6 +50,8 @@ def clear_ECs(targets):
     # apply the mask to targets to produce the test matrix
     new_targets_t = targets.transpose()[mask]
     rem = []
+
+    # remove EC numbers with only one protein, as prediction will be impossible, given the splitting of data
     i = 0
     for target in new_targets_t:
         if np.count_nonzero(target) == 1:

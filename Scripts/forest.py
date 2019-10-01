@@ -31,7 +31,7 @@ def main():
     pfam = list(map(str.strip, pfam))
     ECs = list(map(str.strip, ECs))
 
-    targets = sparse.load_npz(DATA + "target_matrix.npz")#.todense() add when not using test dataset
+    targets = sparse.load_npz(DATA + "target_matrix.npz")#.todense() # add when not using test dataset
 
     # ------------------------------------------------------------------------------------------------------
     # make a test dataset
@@ -57,15 +57,27 @@ def main():
     # print("Percentage empty rows in target matrix after removal of empty rows down to %d: %.2f%%" % (limit, prep.get_empty(targets)))
 
     # ------------------------------------------------------------------------------------------------------
-    # make learning and test datasets
+    # Train a random forest classifier
 
+    # Make learning and test datasets
     X_train, X_test, y_train, y_test = train_test_split(scores, targets, test_size=0.3, random_state=1, stratify=targets)
-    forest = RandomForestClassifier(random_state=1, n_estimators=10)
 
+    # Make the classifier
+    forest = RandomForestClassifier(random_state=1, n_estimators=1000, n_jobs=-1)
+
+    # Train the classifier on the data
     forest.fit(X_train, y_train)
+
+    # Predict the outcomes of the test data
     Z = forest.predict(X_test)
+    # Make an equality matrix
     equality = (Z == y_test)
+    # Determine accuracy from the number of Trues in the equality matrix
     print("Accuracy of model: %.2f%%" % (100*np.count_nonzero(equality)/y_test.size))
+
+    # ------------------------------------------------------------------------------------------------------
+    # Output the classifier as a pickle using joblib
+
     joblib.dump(forest, DATA + "forest.clf")
 
 
