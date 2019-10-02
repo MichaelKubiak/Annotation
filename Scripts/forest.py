@@ -12,6 +12,7 @@ from test_data import create_test
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 import joblib
+import test_harness as th
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -68,18 +69,19 @@ def main():
     # Train the classifier on the data
     forest.fit(X_train, y_train)
 
-    # Predict the outcomes of the test data
-    Z = forest.predict(X_test)
-    # Make an equality matrix
-    equality = (Z == y_test)
-    # Determine accuracy from the number of Trues in the equality matrix
-    print("Accuracy of model: %.2f%%" % (100*np.count_nonzero(equality)/y_test.size))
-
     # ------------------------------------------------------------------------------------------------------
     # Output the classifier as a pickle using joblib
 
     joblib.dump(forest, DATA + "forest.clf")
 
+    # ------------------------------------------------------------------------------------------------------
+    # Test the model
+
+    pred = th.predict(X_test, forest)
+    print("Accuracy of model: %.2f%%" % (th.get_accuracy(pred, y_test)))
+
+    positives, negatives = th.get_false(pred, y_test)
+    print("%d were false positives and %d were false negatives" % (positives, negatives))
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
