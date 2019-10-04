@@ -17,7 +17,6 @@ def choose_hmm(scores, namelist, targets):
 
     indices = {k: v for k, v in indices.items() if len(v) == 10}
 
-
     newindices = {}
     for k, v in indices.items():
         nonzeros, zeros = check_targets(v, targets)

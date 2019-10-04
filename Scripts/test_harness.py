@@ -32,19 +32,25 @@ def get_accuracy(prediction, y_test):
 # ------------------------------------------------------------------------------------------------------
 # Function to calculate the number of false positives and false negatives
 
-def get_false(prediction, y_test):
+def get_numbers(prediction, y_test):
 
     # Make an equality matrix
     equality = (prediction == y_test)
+
     # For each false in the equality matrix, find whether it was a false positive or false negative
-    positive, negative = 0, 0
+    positive, negative = [0, 0], [0, 0]
     for row in range(equality.shape[0]):
         for col in range(equality.shape[1]):
             if not equality[(row, col)]:
                 if not prediction[(row, col)]:
-                    negative += 1
+                    negative[1] += 1
                 elif not y_test[(row, col)]:
-                    positive += 1
+                    positive[1] += 1
+            else:
+                if prediction[(row, col)]:
+                    positive[0] += 1
+                else:
+                    negative[0] += 1
     return positive, negative
 
 
