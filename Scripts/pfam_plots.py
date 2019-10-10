@@ -129,15 +129,15 @@ def main():
     # Read in files
 
     # Load matrix from .npz file
-    scores_t = sparse.load_npz(DATA + "score_matrix.npz").transpose()
+    scores_t = sparse.load_npz(DATA + "score_matrix_1.npz").transpose()
 
-    with open(DATA + "matrix_columns") as pfam_file:
+    with open(DATA + "matrix_columns_1") as pfam_file:
         pfam = pfam_file.readlines()
 
     # Strip newlines from the end of list members
     pfam = list(map(str.strip, pfam))
 
-    targets = sparse.load_npz(DATA+"target_matrix.npz")
+    targets = sparse.load_npz(DATA + "target_matrix_1.npz")
 
     # ------------------------------------------------------------------------------------------------------
     # Plot Pfam HMM frequency plot

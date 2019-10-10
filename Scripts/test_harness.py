@@ -37,21 +37,52 @@ def get_numbers(prediction, y_test):
     # Make an equality matrix
     equality = (prediction == y_test)
 
-    # For each false in the equality matrix, find whether it was a false positive or false negative
-    positive, negative = [0, 0], [0, 0]
-    for row in range(equality.shape[0]):
-        for col in range(equality.shape[1]):
-            if not equality[(row, col)]:
-                if not prediction[(row, col)]:
-                    negative[1] += 1
-                elif not y_test[(row, col)]:
-                    positive[1] += 1
+    # For each EC number, determine the number of true positives, true negatives, false positives and false negatives
+    true_positives, true_negatives, false_positives, false_negatives = [], [], [], []
+    for col in range(equality.shape[1]):
+        t_pos, t_neg, f_pos, f_neg = 0, 0, 0, 0
+        for row in range(equality.shape[0]):
+            if equality[(row, col)] and prediction[(row, col)]:
+                t_pos += 1
+            elif equality[(row, col)] and not prediction[(row, col)]:
+                t_neg += 1
+            elif prediction[(row, col)]:
+                f_neg += 1
             else:
-                if prediction[(row, col)]:
-                    positive[0] += 1
-                else:
-                    negative[0] += 1
-    return positive, negative
+                f_pos += 1
+
+        true_positives.append(t_pos)
+        true_negatives.append(t_neg)
+        false_positives.append(f_pos)
+        false_negatives.append(f_neg)
+
+    return true_positives, true_negatives, false_positives, false_negatives
+
+
+# ------------------------------------------------------------------------------------------------------
+# Function to calculate sensitivities or specificities
+
+def calculate_Ratio_True(correct_a, false_b):
+    try:
+        return correct_a/(correct_a + false_b)
+    except ZeroDivisionError:
+        return 1
+
+
+# ------------------------------------------------------------------------------------------------------
+# Function to calculate sensitivities
+
+def getSensitivity(t_pos, f_neg):
+    return calculate_Ratio_True(t_pos, f_neg)
+
+
+# ------------------------------------------------------------------------------------------------------
+# Function to calculate specificities
+
+def getSpecificity(t_neg, f_pos):
+    return calculate_Ratio_True(t_neg, f_pos)
+
+
 
 
 

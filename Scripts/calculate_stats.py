@@ -24,7 +24,7 @@ def main():
         pfam, swissprot = pfamfile.readlines(), spfile.readlines()
 
     # strip newline characters from the ends of list members
-    pfam, swissprot = list(map(str.strip, pfam)), list(map(str.strip, pfam))
+    pfam, swissprot = list(map(str.strip, pfam)), list(map(str.strip, swissprot))
 
     # load matrix from .npz file
     scores = sparse.load_npz(DATA + "score_matrix.npz")

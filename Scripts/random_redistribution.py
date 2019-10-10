@@ -12,6 +12,7 @@ from sklearn.model_selection import train_test_split
 import test_harness as th
 import random
 import numpy as np
+from statistics import mean, pstdev
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -25,12 +26,16 @@ def test_rearrange(y_test):
     pred = y_test[rearr]
     score = th.get_accuracy(pred, y_test)
     print("Accuracy of model: %.2f%%" % score)
-    positives, negatives = th.get_numbers(pred, y_test)
-    print("%d were false positives and %d were false negatives" % (positives[1], negatives[1]))
-    sensitivity = 100*positives[0]/(positives[0] + negatives[1])
-    print("Sensitivity of model: %.2f%%" % sensitivity)
-    specificity = 100*negatives[0]/(negatives[0] + positives[1])
-    print("Specificity of model: %.2f%%" % specificity)
+    true_positives, true_negatives, false_positives, false_negatives = th.get_numbers(pred, y_test)
+    sensitivities, specificities = [], []
+    for EC in range(len(true_positives)):
+        sensitivities.append(th.getSensitivity(true_positives[EC], false_negatives[EC]))
+
+        specificities.append(th.getSpecificity(true_negatives[EC], false_positives[EC]))
+    sensitivity = mean(sensitivities)
+    print("Mean sensitivity: (%.2f +/- %.2f)%%" % (100*sensitivity, 100*pstdev(sensitivities)))
+    specificity = mean(specificities)
+    print("Mean specificity: (%.2f +/- %.2f)%% " % (100*specificity, 100*pstdev(specificities)))
     return score, sensitivity, specificity
 
 
@@ -84,9 +89,9 @@ def main():
         X_train, X_test, y_train, y_test = train_test_split(scores, targets, test_size=0.3, random_state=i)
         test_scores.append(test_rearrange(y_test))
     test_scores = np.array(test_scores)
-    print("mean accuracy:", sum(test_scores[:,0])/len(test_scores[:,0]))
-    print("mean sensitivity:", sum(test_scores[:,1])/len(test_scores[:,1]))
-    print("mean specificity:", sum(test_scores[:,2])/len(test_scores[:,2]))
+    print("mean accuracy:", mean(test_scores[:, 0]))
+    print("mean sensitivity:", mean(test_scores[:, 1]))
+    print("mean specificity:", mean(test_scores[:, 2]))
 
 
 # ------------------------------------------------------------------------------------------------------
