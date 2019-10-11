@@ -4,8 +4,7 @@
 # ------------------------------------------------------------------------------------------------------
 # Imports
 
-import argparse
-from scipy import sparse
+from sklearn.model_selection import train_test_split
 import prep
 from test_data import create_test
 from sklearn.ensemble import RandomForestClassifier
@@ -17,6 +16,19 @@ import train_model as tm
 
 
 # ------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------
+# Train a random forest classifier
+
+def train_forest(scores, targets, i, classifier):
+
+    # Make learning and test datasets
+    X_train, X_test, y_train, y_test = train_test_split(scores, targets, test_size=0.3, random_state=i) # use skmultilearn?
+    # Make the classifier
+    model = classifier(random_state=i, n_estimators=1000, n_jobs=-1)
+    # Train the classifier on the data
+    model.fit(X_train, y_train)
+    return X_test, model, y_test
+
 # ------------------------------------------------------------------------------------------------------
 
 def main():
@@ -51,13 +63,22 @@ def main():
     #
     # print("Percentage empty rows in target matrix after removal of empty rows down to %d: %.2f%%" % (limit, prep.get_empty(targets)))
     # ------------------------------------------------------------------------------------------------------
-    # Test method
+    # test method
+    test_scores = []
+    for i in range(10):
+        print("rand =", i)
+        X_test, forest, y_test = train_forest(scores, targets, i)
+        test_scores.append(th.test_model(X_test, forest, y_test))
+    test_scores = np.array(test_scores)
+    print("Total mean accuracy:", mean(test_scores[:, 0]))
+    print("Total mean sensitivity:", mean(test_scores[:, 1]))
+    print("Total mean specificity:", mean(test_scores[:, 2]))
+    print("Total mean precision:", mean(test_scores[:, 3]))
+    print("Total mean F1 score:", (2*mean(test_scores[:, 1])*mean(test_scores[:, 3])/(mean(test_scores[:, 1] + mean(test_scores[:, 3])))))
+    # Output the classifier as a pickle using joblib
+    X_test, forest, y_test = train_forest(scores, targets, 1, RandomForestClassifier)
+    joblib.dump(forest, args.path + args.forest_output)
 
-    th.test_method(scores, targets, RandomForestClassifier)
-    # ------------------------------------------------------------------------------------------------------
-    # Output a classifier as a pickle using joblib - To be changed later
-    X_test, forest, y_test = tm.train_model(scores, targets, 1, RandomForestClassifier)
-    joblib.dump(forest, args.path + args.output)
 
 
 # ------------------------------------------------------------------------------------------------------

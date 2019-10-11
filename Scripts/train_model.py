@@ -1,12 +1,11 @@
 # ------------------------------------------------------------------------------------------------------
-# A module containing methods to build and train a sklearn classifier
+# A module containing methods to build and train a classifier
 # ------------------------------------------------------------------------------------------------------
 # Imports
 
 import argparse
 from paths import DATA
 from scipy import sparse
-from sklearn.model_selection import train_test_split
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -41,15 +40,3 @@ def read_files(args):
     return proteins, pfam, ECs, scores, targets
 
 
-# ------------------------------------------------------------------------------------------------------
-# Train a random forest classifier
-
-def train_model(scores, targets, i, classifier):
-
-    # Make learning and test datasets
-    X_train, X_test, y_train, y_test = train_test_split(scores, targets, test_size=0.3, random_state=i) # use skmultilearn?
-    # Make the classifier
-    forest = classifier(random_state=i, n_estimators=1000, n_jobs=-1)
-    # Train the classifier on the data
-    forest.fit(X_train, y_train)
-    return X_test, forest, y_test

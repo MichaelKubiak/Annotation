@@ -2,7 +2,6 @@
 # ------------------------------------------------------------------------------------------------------
 # Imports
 
-import train_model as tm
 import numpy as np
 from sklearn import metrics
 from statistics import mean, pstdev
@@ -10,25 +9,16 @@ from statistics import mean, pstdev
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
-def test_method(scores, targets, classifier):
-    test_scores = []
-    for i in range(10):
-        print("rand =", i)
-        X_test, model, y_test = tm.train_model(scores, targets, i, classifier)
-        test_scores.append(test_model(X_test, model, y_test))
-    test_scores = np.array(test_scores)
-    print("Total mean accuracy:", mean(test_scores[:, 0]))
-    print("Total mean sensitivity:", mean(test_scores[:, 1]))
-    print("Total mean specificity:", mean(test_scores[:, 2]))
-    print("Total mean precision:", mean(test_scores[:, 3]))
-    print("Total mean F1 score:", (2*mean(test_scores[:, 1])*mean(test_scores[:, 3])/(mean(test_scores[:, 1]+mean(test_scores[:, 3])))))
-
-
-# ------------------------------------------------------------------------------------------------------
 # Test the model
 
 def test_model(X_test, model, y_test):
     pred = predict(X_test, model)
+    return get_metrics(pred, y_test)
+
+
+# ------------------------------------------------------------------------------------------------------
+# Produce the metrics of the model
+def get_metrics(pred, y_test):
     accuracy = metrics.accuracy_score(pred, y_test)
     print("Accuracy of model: %.2f%%" % (100*accuracy))
     true_positives, true_negatives, false_positives, false_negatives = get_numbers(pred, y_test)
@@ -58,12 +48,11 @@ def test_model(X_test, model, y_test):
         print("%d EC numbers had no negatives in the target matrix, these have been omitted from the sensitivity calculations"
               " - this is very unlikely" % non_specific)
     precision = mean(precisions)
-    print("Mean precision: (%.2f +/- %.2f)%%"%(100*precision,100*pstdev(precisions)))
+    print("Mean precision: (%.2f +/- %.2f)%%" % (100*precision, 100*pstdev(precisions)))
     if non_precise != 0:
         print("%d EC numbers had no positives in the prediction matrix, these have been omitted from the precision calculations"
               % non_precise)
-    return accuracy, sensitivity, specificity, precision
-
+    return accuracy, precision, sensitivity, specificity
 
 # -----------------------------------------------------------------------------------------------------
 # Function to predict from the test dataset
