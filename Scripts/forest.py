@@ -22,12 +22,12 @@ import train_model as tm
 def train_forest(scores, targets, i, classifier):
 
     # Make learning and test datasets
-    X_train, X_test, y_train, y_test = train_test_split(scores, targets, test_size=0.3, random_state=i) # use skmultilearn?
+    X_train, X_test, y_train, y_test = prep.train_test_split_sparse(scores, targets, test_size=0.3, random_state=i)
     # Make the classifier
     model = classifier(random_state=i, n_estimators=1000, n_jobs=-1)
     # Train the classifier on the data
-    model.fit(X_train, y_train)
-    return X_test, model, y_test
+    model.fit(X_train, y_train.todense())
+    return X_test, model, y_test.todense()
 
 # ------------------------------------------------------------------------------------------------------
 

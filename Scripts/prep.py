@@ -2,10 +2,27 @@
 # ------------------------------------------------------------------------------------------------------
 # imports
 
+import random
 import numpy as np
 
 
 # ------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------
+# Function to split a dataset and target matrix into training and test sets while BOTH ARE SPARSE
+
+def train_test_split_sparse(data, targets, test_size, random_state):
+    rearr = list(range(data.shape[0]))
+    random.seed(random_state)
+    random.shuffle(rearr)
+    X_shuffle = data[rearr]
+    X_train = X_shuffle[round(data.shape[0]*test_size):]
+    X_test = X_shuffle[:round(data.shape[0]*test_size)]
+    y_shuffle = targets[rearr]
+    y_train = y_shuffle[round(targets.shape[0]*test_size):]
+    y_test = y_shuffle[:round(targets.shape[0]*test_size)]
+    return X_train, X_test, y_train, y_test
+
+
 # ------------------------------------------------------------------------------------------------------
 # Function to return the percentage of empty rows in a matrix
 
@@ -22,11 +39,13 @@ def remove_non_family(scores, targets):
     modelled = np.diff(scores.indptr) != 0
     unmodelled = np.where(modelled == False)
 
+    rows = scores.getnnz(1) > 0
+    columns = scores.getnnz(0) > 0
     # remove rows and columns with only 0s
-    scores = scores[scores.getnnz(1) > 0][:, scores.getnnz(0)>0]
+    scores = scores[rows][:, columns]
 
     # remove those rows from targets
-    targets = np.delete(targets, unmodelled[0], axis=0)
+    targets = targets[rows][:, columns]#np.delete(targets, unmodelled[0], axis=0)
 
     return scores, targets
 

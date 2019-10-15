@@ -39,7 +39,7 @@ def clear_ECs(targets):
 
     # Create a boolean mask with True where an EC is used
 
-    mask = []
+    mask = np.diff(targets.tocsr().transpose().indptr) != 0
     for EC in targets.transpose():
         if EC.any():
             mask.append(True)
@@ -67,7 +67,7 @@ def create_test(scores, pfam, targets):
 
     test = choose_hmm(scores, pfam, targets)
 
-    test_dataset, test_targets = remove_non_family(test, targets.todense())
+    test_dataset, test_targets = remove_non_family(test, targets)
 
     test_targets = clear_ECs(test_targets)
     return test_dataset, test_targets
