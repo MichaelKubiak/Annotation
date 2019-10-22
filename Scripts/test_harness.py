@@ -4,54 +4,68 @@
 
 import numpy as np
 from sklearn import metrics
-from statistics import mean, pstdev
+from statistics import mean, pstdev, StatisticsError
 
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
 # Test the model
 
-def test_model(X_test, model, y_test):
-    pred = predict(X_test, model)
-    return get_metrics(pred, y_test)
+def test_model(X_test, model, y_test, ECs):
+    pred = predict(X_test, model).round()
+    return get_metrics(pred, y_test, ECs)
 
 
 # ------------------------------------------------------------------------------------------------------
 # Produce the metrics of the model
-def get_metrics(pred, y_test):
-    accuracy = metrics.accuracy_score(pred, y_test)
-    print("Accuracy of model: %.2f%%" % (100*accuracy))
-    true_positives, true_negatives, false_positives, false_negatives = get_numbers(pred, y_test)
-    sensitivities, specificities, precisions = [], [], []
-    non_sensitive, non_specific, non_precise = 0, 0, 0
-    for EC in range(len(true_positives)):
+def get_metrics(pred, y_test, ECs):
+    top_level = [EC.split(".")[0] for EC in ECs]
+    accuracy, precision, sensitivity, specificity = [], [], [], []
+
+    for i in range(1, 8):
+        indices = [index for index, value in enumerate(top_level) if value == str(i)]
+        accuracy.append(get_accuracy(pred[:, indices], y_test[:, indices]))
+        print("Accuracy of model group %d.x : %.2f%%" % (i, 100*accuracy[-1]))
+
+        true_positives, true_negatives, false_positives, false_negatives = get_numbers(pred[:, indices], y_test[:, indices])
+        sensitivities, specificities, precisions = [], [], []
+        non_sensitive, non_specific, non_precise = 0, 0, 0
+        for EC in range(len(true_positives)):
+            try:
+                sensitivities.append(getSensitivity(true_positives[EC], false_negatives[EC]))
+            except ZeroDivisionError:
+                non_sensitive += 1
+            try:
+                specificities.append(getSpecificity(true_negatives[EC], false_positives[EC]))
+            except ZeroDivisionError:
+                non_specific += 1
+            try:
+                precisions.append(getPrecision(true_positives[EC], false_positives[EC]))
+            except ZeroDivisionError:
+                non_precise += 1
+        sensitivity.append(mean(sensitivities))
         try:
-            sensitivities.append(getSensitivity(true_positives[EC], false_negatives[EC]))
-        except ZeroDivisionError:
-            non_sensitive += 1
+            print("Mean sensitivity group %d: (%.2f +/- %.2f)%%" % (i, 100*sensitivity[-1], 100*pstdev(sensitivities)))
+            if non_sensitive != 0:
+                print("%d EC numbers had no positives in the target matrix, these have been omitted from the sensitivity calculations"
+                      % non_sensitive)
+        except StatisticsError:
+            print("No EC numbers had positives in the target matrix, sensitivity could not be calculated")
         try:
-            specificities.append(getSpecificity(true_negatives[EC], false_positives[EC]))
-        except ZeroDivisionError:
-            non_specific += 1
-        try:
-            precisions.append(getPrecision(true_positives[EC], false_positives[EC]))
-        except ZeroDivisionError:
-            non_precise += 1
-    sensitivity = mean(sensitivities)
-    print("Mean sensitivity: (%.2f +/- %.2f)%%" % (100*sensitivity, 100*pstdev(sensitivities)))
-    if non_sensitive != 0:
-        print("%d EC numbers had no positives in the target matrix, these have been omitted from the sensitivity calculations"
-              % non_sensitive)
-    specificity = mean(specificities)
-    print("Mean specificity: (%.2f +/- %.2f)%%" % (100*specificity, 100*pstdev(specificities)))
-    if non_specific != 0:
-        print("%d EC numbers had no negatives in the target matrix, these have been omitted from the sensitivity calculations"
-              " - this is very unlikely" % non_specific)
-    precision = mean(precisions)
-    print("Mean precision: (%.2f +/- %.2f)%%" % (100*precision, 100*pstdev(precisions)))
-    if non_precise != 0:
-        print("%d EC numbers had no positives in the prediction matrix, these have been omitted from the precision calculations"
-              % non_precise)
+            specificity.append(mean(specificities))
+            print("Mean specificity group %d: (%.2f +/- %.2f)%%" % (i, 100*specificity[-1], 100*pstdev(specificities)))
+            if non_specific != 0:
+                print("%d EC numbers had no negatives in the target matrix, these have been omitted from the sensitivity calculations"
+                      " - this is very unlikely" % non_specific)
+        except StatisticsError:
+            print("No EC numbers had negatives in the target matrix, specificity could not be calculated - this is very unlikely")
+        precision.append(mean(precisions))
+        print("Mean precision group %d: (%.2f +/- %.2f)%%" % (i, 100*precision[-1], 100*pstdev(precisions)))
+        if non_precise != 0:
+            print("%d EC numbers had no positives in the prediction matrix, these have been omitted from the precision calculations"
+                  % non_precise)
+    print(get_accuracy(pred, y_test))
+    print(mean(accuracy))
     return accuracy, precision, sensitivity, specificity
 
 # -----------------------------------------------------------------------------------------------------
@@ -64,17 +78,17 @@ def predict(X_test, model):
     return prediction
 
 
-# # ------------------------------------------------------------------------------------------------------
-# # Function to calculate the accuracy of a model - ALREADY IMPLEMENTED IN sklearn.metrics
-#
-# def get_accuracy(prediction, y_test):
-#
-#     # Make an equality matrix
-#     equality = (prediction == y_test)
-#     # Use the equality matrix to produce a matrix showing whether the classifications were correct
-#     correct = np.all(equality == True, axis=1)
-#     # Determine accuracy from the number of Trues in the matrix
-#     return 100*np.count_nonzero(correct)/correct.size
+# ------------------------------------------------------------------------------------------------------
+# Function to calculate the accuracy of a model
+
+def get_accuracy(prediction, y_test):
+
+    # Make an equality matrix
+    equality = (prediction == y_test)
+    # Use the equality matrix to produce a matrix showing whether the classifications were correct
+    correct = np.all(equality == True, axis=1)
+    # Determine accuracy from the number of Trues in the matrix
+    return np.count_nonzero(correct)/correct.size
 
 
 # ------------------------------------------------------------------------------------------------------

@@ -11,12 +11,15 @@ import numpy as np
 # ------------------------------------------------------------------------------------------------------
 # Function to determine the correct set of HMMs
 
-def choose_hmm(scores, namelist, targets):
+def choose_hmm(scores, pfam, targets):
 
-    indices = get_indices(scores.transpose(), namelist)
+    # get indices of explicit values in each column of the score matrix
+    indices = get_indices(scores.transpose(), pfam)
 
+    # use only hmms that have exactly 10 (arbitrary number that reduces the matrix size significantly) proteins
     indices = {k: v for k, v in indices.items() if len(v) == 10}
 
+    # use only hmms with a high proportion of enzyme hits (for more effective testing)
     newindices = {}
     for k, v in indices.items():
         nonzeros, zeros = check_targets(v, targets)
@@ -27,48 +30,31 @@ def choose_hmm(scores, namelist, targets):
 
     indexlist = []
     for key in newindices.keys():
-        indexlist.append(namelist.index(key))
+        indexlist.append(pfam.index(key))
     test_hmms = scores.transpose()[indexlist]
-    return test_hmms.transpose()
+    pfam = [pfam[index] for index in indexlist]
+    return test_hmms.transpose(), pfam
 
 
 # ------------------------------------------------------------------------------------------------------
 # Function to remove unused EC numbers
 
-def clear_ECs(targets):
-
-    # Create a boolean mask with True where an EC is used
-
-    mask = np.diff(targets.tocsr().transpose().indptr) != 0
-    for EC in targets.transpose():
-        if EC.any():
-            mask.append(True)
-        else:
-            mask.append(False)
-
-    # apply the mask to targets to produce the test matrix
-    new_targets_t = targets.transpose()[mask]
-    rem = []
-
-    # remove EC numbers with only one protein, as prediction will be impossible, given the splitting of data
-    i = 0
-    for target in new_targets_t:
-        if np.count_nonzero(target) == 1:
-            rem.append(i)
-        i += 1
-    new_targets_t = np.delete(new_targets_t, rem, axis=0)
-    return new_targets_t.transpose()
+def clear_ECs(targets, ECs):
+    # get column indices with non-zero values
+    non_zero = targets.getnnz(0) > 0
+    # return target matrix containing only columns with nonzero values
+    return targets[:, non_zero], [ECs[index] for index in range(len(ECs)) if non_zero[index]]
 
 
 # ------------------------------------------------------------------------------------------------------
 # Create test dataset
 
-def create_test(scores, pfam, targets):
+def create_test(scores, proteins, pfam, targets, ECs):
 
-    test = choose_hmm(scores, pfam, targets)
+    scores, pfam = choose_hmm(scores, pfam, targets)
 
-    test_dataset, test_targets = remove_non_family(test, targets)
+    test_dataset, proteins, pfam, test_targets = remove_non_family(scores, proteins, pfam, targets)
 
-    test_targets = clear_ECs(test_targets)
-    return test_dataset, test_targets
+    test_targets, ECs = clear_ECs(test_targets, ECs)
+    return test_dataset, proteins, pfam, test_targets, ECs
 

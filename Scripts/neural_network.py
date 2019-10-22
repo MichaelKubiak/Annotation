@@ -1,38 +1,38 @@
 #! /usr/bin/env python3
 # ------------------------------------------------------------------------------------------------------
-# A script to randomly redistribute the rows of the expected output matrix as a baseline for accuracy
+# A script to build a neural network classifier
 # ------------------------------------------------------------------------------------------------------
 # Imports
 
-import train_model as tm
 import prep
 from test_data import create_test
-from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+import joblib
 import test_harness as th
-import random
 import numpy as np
-from statistics import mean, pstdev
+from statistics import mean
+import train_model as tm
 
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
-# Test the model
+# Train a neural network classifier
 
-def test_rearrange(random_state, y_test):
+def train_network(scores, proteins, targets, i):
 
-    rearr = list(range(y_test.shape[0]))
-    random.seed(random_state)
-    random.shuffle(rearr)
-    pred = y_test[rearr]
-    return th.get_metrics(pred, y_test)
+    # Make learning and test datasets
+    X_train, X_test, y_train, y_test, proteins_train, proteins_test = prep.train_test_split_sparse(scores, proteins, targets, test_size=0.3, random_state=i)
+    # Make the classifier
+    model = MLPClassifier(max_iter=10000, hidden_layer_sizes=(180, 20), random_state=i)
+    # Train the classifier on the data
+    model.fit(X_train, y_train.todense())
+    return X_test, model, y_test.todense(), proteins_test
 
-
-# ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
 
 def main():
 
-    args = tm.arguments("random forest", "forest.clf")
+    args = tm.arguments("Neural Network", "neural_network.clf")
 
     # ------------------------------------------------------------------------------------------------------
     # Read files
@@ -57,24 +57,26 @@ def main():
     # Remove non-enzyme proteins down to a limit
 
     # limit = 0.2
-    #
-    # scores, targets = prep.remove_non_enzyme(scores, targets, limit)
-    #
-    # print("Percentage empty rows in target matrix after removal of empty rows down to %d: %.2f%%" % (limit, prep.get_empty(targets)))
 
-    #test method
+    # scores, proteins, targets = prep.remove_non_enzyme(scores, proteins, targets, limit)
+
+    # print("Percentage empty rows in target matrix after removal of empty rows down to %.2f: %.2f%%" % (limit, prep.get_empty(targets)))
+    # ------------------------------------------------------------------------------------------------------
+    # test method
     test_scores = []
     for i in range(10):
         print("rand =", i)
-        # Make learning and test datasets
-        X_train, X_test, y_train, y_test = train_test_split(scores, targets, test_size=0.3, random_state=i)
-        test_scores.append(test_rearrange(i, y_test))
+        X_test, forest, y_test, proteins_test = train_network(scores, proteins, targets, i)
+        test_scores.append(th.test_model(X_test, forest, y_test, ECs))
     test_scores = np.array(test_scores)
     print("Total mean accuracy:", mean(test_scores[:, 0]))
-    print("Total mean sensitivity:", mean(test_scores[:, 1]))
-    print("Total mean specificity:", mean(test_scores[:, 2]))
-    print("Total mean precision:", mean(test_scores[:, 3]))
-    print("Total mean F1 score:", (2*mean(test_scores[:, 1])*mean(test_scores[:, 3])/(mean(test_scores[:, 1] + mean(test_scores[:, 3])))))
+    print("Total mean sensitivity:", mean(test_scores[:, 2]))
+    print("Total mean specificity:", mean(test_scores[:, 3]))
+    print("Total mean precision:", mean(test_scores[:, 1]))
+    print("Total mean F1 score:", (2*mean(test_scores[:, 2])*mean(test_scores[:, 1])/(mean(test_scores[:, 2] + mean(test_scores[:, 1])))))
+    # Output the classifier as a pickle using joblib
+    X_test, network, y_test = train_network(scores, targets, 1)
+    joblib.dump(network, args.path + args.output)
 
 
 # ------------------------------------------------------------------------------------------------------
