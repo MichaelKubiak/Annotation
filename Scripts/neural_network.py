@@ -68,14 +68,14 @@ def main():
         print("rand =", i)
         X_test, forest, y_test, proteins_test = train_network(scores, proteins, targets, i)
         test_scores.append(th.test_model(X_test, forest, y_test, ECs))
-    test_scores = np.array(test_scores)
-    print("Total mean accuracy:", mean(test_scores[:, 0]))
-    print("Total mean sensitivity:", mean(test_scores[:, 2]))
-    print("Total mean specificity:", mean(test_scores[:, 3]))
-    print("Total mean precision:", mean(test_scores[:, 1]))
-    print("Total mean F1 score:", (2*mean(test_scores[:, 2])*mean(test_scores[:, 1])/(mean(test_scores[:, 2] + mean(test_scores[:, 1])))))
+    # test_scores = np.array(test_scores)
+    # print("Total mean accuracy:", mean(test_scores[:, 0]))
+    # print("Total mean sensitivity:", mean(test_scores[:, 2]))
+    # print("Total mean specificity:", mean(test_scores[:, 3]))
+    # print("Total mean precision:", mean(test_scores[:, 1]))
+    # print("Total mean F1 score:", (2*mean(test_scores[:, 2])*mean(test_scores[:, 1])/(mean(test_scores[:, 2] + mean(test_scores[:, 1])))))
     # Output the classifier as a pickle using joblib
-    X_test, network, y_test = train_network(scores, targets, 1)
+    X_test, network, y_test, proteins_test = train_network(scores, proteins, targets, 1)
     joblib.dump(network, args.path + args.output)
 
 

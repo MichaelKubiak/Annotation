@@ -43,8 +43,8 @@ def get_metrics(pred, y_test, ECs):
                 precisions.append(getPrecision(true_positives[EC], false_positives[EC]))
             except ZeroDivisionError:
                 non_precise += 1
-        sensitivity.append(mean(sensitivities))
         try:
+            sensitivity.append(mean(sensitivities))
             print("Mean sensitivity group %d: (%.2f +/- %.2f)%%" % (i, 100*sensitivity[-1], 100*pstdev(sensitivities)))
             if non_sensitive != 0:
                 print("%d EC numbers had no positives in the target matrix, these have been omitted from the sensitivity calculations"
@@ -59,13 +59,20 @@ def get_metrics(pred, y_test, ECs):
                       " - this is very unlikely" % non_specific)
         except StatisticsError:
             print("No EC numbers had negatives in the target matrix, specificity could not be calculated - this is very unlikely")
-        precision.append(mean(precisions))
-        print("Mean precision group %d: (%.2f +/- %.2f)%%" % (i, 100*precision[-1], 100*pstdev(precisions)))
-        if non_precise != 0:
-            print("%d EC numbers had no positives in the prediction matrix, these have been omitted from the precision calculations"
-                  % non_precise)
-    print(get_accuracy(pred, y_test))
-    print(mean(accuracy))
+        try:
+            precision.append(mean(precisions))
+            print("Mean precision group %d: (%.2f +/- %.2f)%%" % (i, 100*precision[-1], 100*pstdev(precisions)))
+            if non_precise != 0:
+                print("%d EC numbers had no positives in the prediction matrix, these have been omitted from the precision calculations"
+                      % non_precise)
+        except StatisticsError:
+            print("No EC numbers had positives in the prediction matrix, precision could not be calculated")
+    print("Mean specific accuracy: %.2f%%" % (100*mean(accuracy)))
+    print("Mean specific sensitivity: %.2f%%" % (100*mean(sensitivity)))
+    print("Mean specific specificity: %.2f%%" % (100*mean(specificity)))
+    print("Mean specific precision: %.2f%%" % (100*mean(precision)))
+    print("Overall accuracy: %.2f%%" % (100*get_accuracy(pred, y_test)))
+
     return accuracy, precision, sensitivity, specificity
 
 # -----------------------------------------------------------------------------------------------------
@@ -104,13 +111,13 @@ def get_numbers(prediction, y_test):
     for col in range(equality.shape[1]):
         t_pos, t_neg, f_pos, f_neg = 0, 0, 0, 0
         for row in range(equality.shape[0]):
-            if equality[(row, col)] and prediction[(row, col)]:
+            if y_test[(row, col)] and prediction[(row, col)]:
                 t_pos += 1
-            elif equality[(row, col)] and not prediction[(row, col)]:
+            elif not y_test[(row, col)] and not prediction[(row, col)]:
                 t_neg += 1
-            elif prediction[(row, col)]:
+            elif y_test[(row, col)] and not prediction[(row, col)]:
                 f_neg += 1
-            else:
+            elif not y_test[(row, col)] and prediction[(row, col)]:
                 f_pos += 1
 
         true_positives.append(t_pos)
@@ -122,7 +129,7 @@ def get_numbers(prediction, y_test):
 
 
 # ------------------------------------------------------------------------------------------------------
-# Function to calculate sensitivities or specificities
+# Function to calculate metrics
 
 def calculate_Ratio_True(correct_a, false_b):
     return correct_a/(correct_a + false_b)

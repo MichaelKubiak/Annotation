@@ -75,7 +75,7 @@ def main():
     print("Total mean precision:", mean(test_scores[:, 3]))
     print("Total mean F1 score:", (2*mean(test_scores[:, 1])*mean(test_scores[:, 3])/(mean(test_scores[:, 1] + mean(test_scores[:, 3])))))
     # Output the classifier as a pickle using joblib
-    X_test, forest, y_test = train_forest(scores, targets, 1)
+    X_test, forest, y_test, proteins_test = train_forest(scores, proteins, targets, 1)
     joblib.dump(forest, args.path + args.output)
 
 
