@@ -18,13 +18,13 @@ from statistics import mean, pstdev
 # ------------------------------------------------------------------------------------------------------
 # Test the model
 
-def test_rearrange(random_state, y_test):
+def test_rearrange(random_state, y_test, ECs):
 
     rearr = list(range(y_test.shape[0]))
     random.seed(random_state)
     random.shuffle(rearr)
     pred = y_test[rearr]
-    return th.get_metrics(pred, y_test)
+    return th.get_metrics(pred.todense(), y_test.todense(), ECs)
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -67,14 +67,14 @@ def main():
     for i in range(10):
         print("rand =", i)
         # Make learning and test datasets
-        X_train, X_test, y_train, y_test = train_test_split(scores, targets, test_size=0.3, random_state=i)
-        test_scores.append(test_rearrange(i, y_test))
-    test_scores = np.array(test_scores)
-    print("Total mean accuracy:", mean(test_scores[:, 0]))
-    print("Total mean sensitivity:", mean(test_scores[:, 1]))
-    print("Total mean specificity:", mean(test_scores[:, 2]))
-    print("Total mean precision:", mean(test_scores[:, 3]))
-    print("Total mean F1 score:", (2*mean(test_scores[:, 1])*mean(test_scores[:, 3])/(mean(test_scores[:, 1] + mean(test_scores[:, 3])))))
+        X_train, X_test, y_train, y_test, proteins_train, proteins_test = prep.train_test_split_sparse(scores, proteins, targets, test_size=0.3, random_state=i)
+        test_scores.append(test_rearrange(i, y_test, ECs))
+    # test_scores = np.array(test_scores)
+    # print("Total mean accuracy:", mean(test_scores[:, 0]))
+    # print("Total mean sensitivity:", mean(test_scores[:, 1]))
+    # print("Total mean specificity:", mean(test_scores[:, 2]))
+    # print("Total mean precision:", mean(test_scores[:, 3]))
+    # print("Total mean F1 score:", (2*mean(test_scores[:, 1])*mean(test_scores[:, 3])/(mean(test_scores[:, 1] + mean(test_scores[:, 3])))))
 
 
 # ------------------------------------------------------------------------------------------------------

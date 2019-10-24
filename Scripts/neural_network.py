@@ -74,6 +74,7 @@ def main():
     # print("Total mean specificity:", mean(test_scores[:, 3]))
     # print("Total mean precision:", mean(test_scores[:, 1]))
     # print("Total mean F1 score:", (2*mean(test_scores[:, 2])*mean(test_scores[:, 1])/(mean(test_scores[:, 2] + mean(test_scores[:, 1])))))
+
     # Output the classifier as a pickle using joblib
     X_test, network, y_test, proteins_test = train_network(scores, proteins, targets, 1)
     joblib.dump(network, args.path + args.output)
