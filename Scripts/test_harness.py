@@ -24,7 +24,10 @@ def get_metrics(pred, y_test, ECs):
 
     for i in range(1, 8):
         indices = [index for index, value in enumerate(top_level) if value == str(i)]
-        accuracy.append(get_accuracy(pred[:, indices], y_test[:, indices]))
+        act_p = np.where(y_test[:, indices].any(1))[0]
+        pred_p = np.where(pred[:, indices].any(1))[0]
+        p = np.unique(np.concatenate((act_p, pred_p)))
+        accuracy.append(get_accuracy(pred[p, ][:, indices], y_test[p, ][:, indices]))
         print("Accuracy of model group %d.x : %.2f%%" % (i, 100*accuracy[-1]))
 
         true_positives, true_negatives, false_positives, false_negatives = get_numbers(pred[:, indices], y_test[:, indices])
