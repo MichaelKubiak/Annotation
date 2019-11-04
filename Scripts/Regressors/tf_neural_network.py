@@ -4,13 +4,11 @@
 # ------------------------------------------------------------------------------------------------------
 # Imports
 
-import prep
-from test_data import create_test
+from Classifiers import prep,train_model as tm
+from Classifiers.test_data import create_test
 import joblib
 import test_harness as th
 import numpy as np
-from statistics import mean
-import train_model as tm
 import tensorflow as tf
 
 
@@ -21,7 +19,7 @@ import tensorflow as tf
 def train_network(scores, targets, i, n_hidden, n_nodes, activations):
 
     # Make learning and test datasets
-    X_train, X_test, y_train, y_test = prep.train_test_split_sparse(scores, targets, test_size=0.3, random_state=i)
+    X_train, X_test, y_train, y_test = prep.train_test_split_sparse(scores,targets,test_size=0.3,random_state=i)
     n_features = X_train.shape[1]
     n_classes = y_train.shape[1]
     np.random.seed(i)
@@ -63,11 +61,11 @@ def main():
     # ------------------------------------------------------------------------------------------------------
     # Remove proteins with no pfam hits - nothing happens with test set
 
-    print("Percentage empty rows in target matrix before pruning: %.2f%%" % (prep.get_empty(targets)))
+    print("Percentage empty rows in target matrix before pruning: %.2f%%"%(prep.get_empty(targets)))
 
-    scores, targets = prep.remove_non_family(scores, targets)
+    scores, targets = prep.remove_non_family(scores,targets)
 
-    print("Percentage empty rows in target matrix after pruning: %.2f%%" % (prep.get_empty(targets)))
+    print("Percentage empty rows in target matrix after pruning: %.2f%%"%(prep.get_empty(targets)))
 
     # ------------------------------------------------------------------------------------------------------
     # Remove non-enzyme proteins down to a limit

@@ -4,15 +4,11 @@
 # ------------------------------------------------------------------------------------------------------
 # Imports
 
-import prep
-from test_data import create_test
+from Classifiers import prep,train_model as tm
+from Classifiers.test_data import create_test
 from sklearn.neural_network import MLPClassifier
 import joblib
 import test_harness as th
-import numpy as np
-from statistics import mean
-import train_model as tm
-
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
@@ -21,7 +17,7 @@ import train_model as tm
 def train_network(scores, proteins, targets, i):
 
     # Make learning and test datasets
-    X_train, X_test, y_train, y_test, proteins_train, proteins_test = prep.train_test_split_sparse(scores, proteins, targets, test_size=0.3, random_state=i)
+    X_train, X_test, y_train, y_test, proteins_train, proteins_test = prep.train_test_split_sparse(scores,proteins,targets,test_size=0.3,random_state=i)
     # Make the classifier
     model = MLPClassifier(max_iter=10000, hidden_layer_sizes=(180, 20), random_state=i)
     # Train the classifier on the data
@@ -47,11 +43,11 @@ def main():
     # ------------------------------------------------------------------------------------------------------
     # Remove proteins with no pfam hits - nothing happens with test set
 
-    print("Percentage empty rows in target matrix before pruning: %.2f%%" % (prep.get_empty(targets)))
+    print("Percentage empty rows in target matrix before pruning: %.2f%%"%(prep.get_empty(targets)))
 
-    scores, proteins, pfam, targets = prep.remove_non_family(scores, proteins, pfam, targets)
+    scores, proteins, pfam, targets = prep.remove_non_family(scores,proteins,pfam,targets)
 
-    print("Percentage empty rows in target matrix after pruning: %.2f%%" % (prep.get_empty(targets)))
+    print("Percentage empty rows in target matrix after pruning: %.2f%%"%(prep.get_empty(targets)))
 
     # ------------------------------------------------------------------------------------------------------
     # Remove non-enzyme proteins down to a limit

@@ -4,15 +4,10 @@
 # ------------------------------------------------------------------------------------------------------
 # Imports
 
-import train_model as tm
-import prep
-from test_data import create_test
-from sklearn.model_selection import train_test_split
+from Classifiers import prep,train_model as tm
+from Classifiers.test_data import create_test
 import test_harness as th
 import random
-import numpy as np
-from statistics import mean, pstdev
-
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
@@ -32,7 +27,7 @@ def test_rearrange(random_state, y_test, ECs):
 
 def main():
 
-    args = tm.arguments("random forest", "forest.clf")
+    args = tm.arguments("random redistribution", "random.clf")
 
     # ------------------------------------------------------------------------------------------------------
     # Read files
@@ -47,11 +42,11 @@ def main():
     # ------------------------------------------------------------------------------------------------------
     # Remove proteins with no pfam hits - nothing happens with test set
 
-    print("Percentage empty rows in target matrix before pruning: %.2f%%" % (prep.get_empty(targets)))
+    print("Percentage empty rows in target matrix before pruning: %.2f%%"%(prep.get_empty(targets)))
 
-    scores, proteins, pfam, targets = prep.remove_non_family(scores, proteins, pfam, targets)
+    scores, proteins, pfam, targets = prep.remove_non_family(scores,proteins,pfam,targets)
 
-    print("Percentage empty rows in target matrix after pruning: %.2f%%" % (prep.get_empty(targets)))
+    print("Percentage empty rows in target matrix after pruning: %.2f%%"%(prep.get_empty(targets)))
 
     # ------------------------------------------------------------------------------------------------------
     # Remove non-enzyme proteins down to a limit
@@ -67,7 +62,7 @@ def main():
     for i in range(10):
         print("rand =", i)
         # Make learning and test datasets
-        X_train, X_test, y_train, y_test, proteins_train, proteins_test = prep.train_test_split_sparse(scores, proteins, targets, test_size=0.3, random_state=i)
+        X_train, X_test, y_train, y_test, proteins_train, proteins_test = prep.train_test_split_sparse(scores,proteins,targets,test_size=0.3,random_state=i)
         test_scores.append(test_rearrange(i, y_test, ECs))
     # test_scores = np.array(test_scores)
     # print("Total mean accuracy:", mean(test_scores[:, 0]))

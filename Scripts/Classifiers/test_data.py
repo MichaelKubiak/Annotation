@@ -2,8 +2,8 @@
 # ------------------------------------------------------------------------------------------------------
 # imports
 
-from pfam_plots import get_indices, check_targets
-from prep import remove_non_family
+from Classifiers.pfam_plots import get_indices, check_targets
+from Classifiers.prep import remove_non_family
 
 
 # ------------------------------------------------------------------------------------------------------

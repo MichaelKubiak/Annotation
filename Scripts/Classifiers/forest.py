@@ -4,15 +4,13 @@
 # ------------------------------------------------------------------------------------------------------
 # Imports
 
-import prep
-from test_data import create_test
+from Classifiers import prep,train_model as tm
+from Classifiers.test_data import create_test
 from sklearn.ensemble import RandomForestClassifier
 import joblib
 import test_harness as th
 import numpy as np
-from statistics import mean, pstdev
-import train_model as tm
-
+from statistics import mean
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
@@ -21,9 +19,9 @@ import train_model as tm
 def train_forest(scores, proteins, targets, i):
 
     # Make learning and test datasets
-    X_train, X_test, y_train, y_test, proteins_train, proteins_test = prep.train_test_split_sparse(scores, proteins, targets, test_size=0.3, random_state=i)
+    X_train, X_test, y_train, y_test, proteins_train, proteins_test = prep.train_test_split_sparse(scores,proteins,targets,test_size=0.3,random_state=i)
     # Make the classifier
-    model = RandomForestClassifier(random_state=i, n_estimators=1000, n_jobs=-1)
+    model = RandomForestClassifier(random_state=i, n_estimators=1000)
     # Train the classifier on the data
     model.fit(X_train, y_train.todense())
     return X_test, model, y_test.todense(), proteins_test
@@ -47,11 +45,11 @@ def main():
     # ------------------------------------------------------------------------------------------------------
     # Remove proteins with no pfam hits - nothing happens with test set
 
-    print("Percentage empty rows in target matrix before pruning: %.2f%%" % (prep.get_empty(targets)))
+    print("Percentage empty rows in target matrix before pruning: %.2f%%"%(prep.get_empty(targets)))
 
-    scores, proteins, pfam, targets = prep.remove_non_family(scores, proteins, pfam, targets)
+    scores, proteins, pfam, targets = prep.remove_non_family(scores,proteins,pfam,targets)
 
-    print("Percentage empty rows in target matrix after pruning: %.2f%%" % (prep.get_empty(targets)))
+    print("Percentage empty rows in target matrix after pruning: %.2f%%"%(prep.get_empty(targets)))
 
     # ------------------------------------------------------------------------------------------------------
     # Remove non-enzyme proteins down to a limit
