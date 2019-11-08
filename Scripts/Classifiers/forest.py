@@ -4,11 +4,10 @@
 # ------------------------------------------------------------------------------------------------------
 # Imports
 
-from Classifiers import prep,train_model as tm
+from Classifiers import prep,train_model as tm,test_harness as th
 from Classifiers.test_data import create_test
 from sklearn.ensemble import RandomForestClassifier
 import joblib
-import test_harness as th
 import numpy as np
 from statistics import mean
 

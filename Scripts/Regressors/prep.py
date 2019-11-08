@@ -5,30 +5,34 @@
 import random
 import numpy as np
 import re
-from collections import defaultdict
+
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
 # Function to split a dataset and target list into training and test sets
 
-def train_test_split_sparse(data, proteins, targets, test_size, random_state):
+def train_test_split_sparse(data, targets, test_size, random_state):
+    X_shuffle, y_shuffle = rearrange(data, targets, random_state)
+
+    X_train = X_shuffle[round(data.shape[0]*test_size):]
+    X_test = X_shuffle[:round(data.shape[0]*test_size)]
+
+    y_train = y_shuffle[round(len(targets)*test_size):]
+    y_test = y_shuffle[:round(len(targets)*test_size)]
+
+    return X_train, X_test, y_train, y_test
+
+
+# ------------------------------------------------------------------------------------------------------
+# Function to rearrange a sparse matrix and a list
+
+def rearrange(data, targets, random_state):
     rearr = list(range(data.shape[0]))
     random.seed(random_state)
     random.shuffle(rearr)
     X_shuffle = data[rearr]
-    X_train = X_shuffle[round(data.shape[0]*test_size):]
-    X_test = X_shuffle[:round(data.shape[0]*test_size)]
-    print(len(targets))
-    print(max(rearr))
     y_shuffle = [targets[x] for x in rearr]
-    y_train = y_shuffle[round(len(targets)*test_size):]
-    y_test = y_shuffle[:round(len(targets)*test_size)]
-    proteins_shuffle = [proteins[x] for x in rearr]
-    proteins_train = proteins_shuffle[round(len(proteins)*test_size):]
-    proteins_test = proteins_shuffle[:round(len(proteins)*test_size)]
-
-    return X_train, X_test, y_train, y_test, proteins_train, proteins_test
-
+    return X_shuffle, y_shuffle
 
 # ------------------------------------------------------------------------------------------------------
 # Function to return the percentage of empty rows in a matrix
