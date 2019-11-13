@@ -11,7 +11,7 @@ from statistics import mean, pstdev, StatisticsError
 # Test the model
 
 def test_model(X_test, model, y_test, ECs):
-    pred = predict(X_test, model).round()
+    pred = model.predict(X_test)
     return get_metrics(pred, y_test, ECs)
 
 
@@ -77,15 +77,6 @@ def get_metrics(pred, y_test, ECs):
     print("Overall accuracy: %.2f%%" % (100*get_accuracy(pred, y_test)))
 
     return accuracy, precision, sensitivity, specificity
-
-# -----------------------------------------------------------------------------------------------------
-# Function to predict from the test dataset
-
-def predict(X_test, model):
-
-    # Predict the outcomes of the test data
-    prediction = model.predict(X_test)
-    return prediction
 
 
 # ------------------------------------------------------------------------------------------------------

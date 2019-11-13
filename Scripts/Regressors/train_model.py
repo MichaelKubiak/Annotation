@@ -19,6 +19,9 @@ def arguments(descriptor, output):
     parser.add_argument("-t", "--targets", default="targets", help="File name of the target list")
     parser.add_argument("-a", "--protein_accessions", default="matrix_rows", help="File name of the list of protein accessions")
     parser.add_argument("-f", "--pfam_accessions", default="matrix_columns", help="File name of the list of pfam accessions")
+    parser.add_argument("-d", "--hidden", default=5, help="Number of hidden layers")
+    parser.add_argument("-n", "--nodes", default=8000, help="Number (or list of numbers in []) of nodes in each layer")
+    parser.add_argument("-e", "--epochs", default=10, help="Number of epochs over which to train")
     parser.add_argument("-o", "--output", default=output, help="File name for output of the model")
     return parser.parse_args()
 
