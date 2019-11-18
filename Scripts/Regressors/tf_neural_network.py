@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
-# ------------------------------------------------------------------------------------------------------
 # A module to build a neural network classifier with tensorflow
 # ------------------------------------------------------------------------------------------------------
 # Imports
@@ -78,60 +76,3 @@ def generate_batch(X_train, y_train, batch_size, epochs=1, random_state=0):
             y_batch = [y for y_list in y_batch for y in y_list]
             yield X_batch, y_batch
 
-
-# # ------------------------------------------------------------------------------------------------------
-#
-# def main():
-#
-#     args = tm.arguments("Neural Network", "neural_network.clf")
-#
-#     # ------------------------------------------------------------------------------------------------------
-#     # Read files
-#
-#     proteins, pfam, ECs, scores, targets = tm.read_files(args)
-#
-#     # ------------------------------------------------------------------------------------------------------
-#     # make a test dataset
-#
-#     scores, targets = create_test(scores, pfam, targets)
-#
-#     # ------------------------------------------------------------------------------------------------------
-#     # Remove proteins with no pfam hits - nothing happens with test set
-#
-#     print("Percentage empty rows in target matrix before pruning: %.2f%%"%(prep.get_empty(targets)))
-#
-#     scores, targets = prep.remove_non_family(scores,targets)
-#
-#     print("Percentage empty rows in target matrix after pruning: %.2f%%"%(prep.get_empty(targets)))
-#
-#     # ------------------------------------------------------------------------------------------------------
-#     # Remove non-enzyme proteins down to a limit
-#
-#     # limit = 0.2
-#
-#     # scores, targets = prep.remove_non_enzyme(scores, targets, limit)
-#
-#     # print("Percentage empty rows in target matrix after removal of empty rows down to %.2f: %.2f%%" % (limit, prep.get_empty(targets)))
-#     # ------------------------------------------------------------------------------------------------------
-#     # test method
-#     test_scores = []
-#     for i in range(10):
-#         print("rand =", i)
-#         X_test, network, y_test = train_network(scores, targets, i)
-#         test_scores.append(th.test_model(X_test, network, y_test))
-#     # test_scores = np.array(test_scores)
-#     # print("Total mean accuracy:", mean(test_scores[:, 0]))
-#     # print("Total mean sensitivity:", mean(test_scores[:, 2]))
-#     # print("Total mean specificity:", mean(test_scores[:, 3]))
-#     # print("Total mean precision:", mean(test_scores[:, 1]))
-#     # print("Total mean F1 score:", (2*mean(test_scores[:, 2])*mean(test_scores[:, 1])/(mean(test_scores[:, 2] + mean(test_scores[:, 1])))))
-#     # Output the classifier as a pickle using joblib
-#     X_test, network, y_test = train_network(scores, targets, 1)
-#     joblib.dump(network, args.path + args.output)
-#
-# # ------------------------------------------------------------------------------------------------------
-# # ------------------------------------------------------------------------------------------------------
-#
-# # Don't run if imported
-# if __name__ == '__main__':
-#     main()

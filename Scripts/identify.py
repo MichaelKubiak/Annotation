@@ -4,7 +4,7 @@
 # ------------------------------------------------------------------------------------------------------
 # Imports
 
-from paths import DATA
+from parse_result import path_arg
 import re
 import numpy as np
 from scipy import sparse
@@ -48,6 +48,7 @@ def get_targetlist(ECs, order):
 
 def main():
 
+    DATA = path_arg().path
     # ------------------------------------------------------------------------------------------------------
     # Read in files
 

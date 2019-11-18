@@ -4,10 +4,18 @@
 # ------------------------------------------------------------------------------------------------------
 #Imports
 
-from paths import DATA
+import argparse
 import re
 from scipy import sparse
 import numpy as np
+
+
+# ------------------------------------------------------------------------------------------------------
+def path_arg():
+    from paths import DATA
+    parser = argparse.ArgumentParser(description="One of a set of scripts to parse the result of a searchhmm to be used in the model")
+    parser.add_argument("-p", "--path", default=DATA, help="Path to the folder to be used for i/o")
+    return parser.parse_args()
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -15,16 +23,17 @@ import numpy as np
 
 def main():
 
+    DATA = path_arg().path
     # ------------------------------------------------------------------------------------------------------
     # Read files
 
     with open(DATA + "Pfam-A.hmm", encoding="utf-8") as pfamfile:
         pfam = pfamfile.readlines()
 
-    with open(DATA+"uniprot_sprot.fasta") as fastafile:
+    with open(DATA + "uniprot_sprot.fasta") as fastafile:
         fasta = fastafile.readlines()
 
-    with open(DATA+"hmmresult_full") as infile:
+    with open(DATA + "hmmresult_full") as infile:
         result = infile.readlines()
 
     # ------------------------------------------------------------------------------------------------------
