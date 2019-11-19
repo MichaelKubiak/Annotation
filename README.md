@@ -1,31 +1,14 @@
 # Annotation
 
-## Modules
-
-#### paths.py
-
-A variable containing the path to the data folder
-
-#### frequency_bars.py
-
-A function to draw consistent bar charts
-
-#### test_data.py
-
-Functions to produce a test dataset
-
-#### prep.py
-
-Functions to:
-
-- reduce the data by removing proteins that do not hit any HMMs
-
-- remove a portion of the non enzyme proteins, as they will be less important to the learning process
-
-
 ## Scripts
 
 ### bash
+
+#### annotation
+
+Start here.
+
+This script runs the full pipeline, and has options to perform each section individually.  Most of the sections are not neccessary unless you wish to build your own model rather than using the one provided.  If that is the case, it is highly recommended that an HPC cluster is used, as the process takes time.
 
 #### get_data
 
@@ -66,4 +49,27 @@ Plots frequency bar charts for:
 - Number of hits per HMM
 
 - Ratio of enzyme to non-enzyme hits per HMM
+
+## Modules
+
+#### paths.py
+
+A variable containing the path to the data folder
+
+#### frequency_bars.py
+
+A function to draw consistent bar charts
+
+#### test_data.py
+
+Functions to produce a test dataset
+
+#### prep.py
+
+Functions to:
+
+- reduce the data by removing proteins that do not hit any HMMs
+
+- remove a portion of the non enzyme proteins, as they will be less important to the learning process
+
 
