@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+path=$(pwd)/Data
+while getopts hP:dmpb:t:a: option
+do
+case "${option}"
+in
+h) #help
+echo help goes here
+exit
+;;
+P) #set data path
+path=$OPTARG
+;;
+
+#### This set of options WILL take time, it is suggested that a HPC cluster is used if running them ####
+
+d) #download files
+echo downloading files
+get_data
+;;
+
+m) #run swissprot against models and parse the output
+echo running hmmer
+hmmsearch --tblout $path/hmmresult_full $path/Pfam-A.hmm $path/uniprot_sprot.fasta
+python3 Scripts/parse_result.py -p $path
+python3 Scripts/identify.py -p $path
+;;
+
+b) #build model and output it to the argument
+python3 Scripts/train.py -p $path -o $OPTARG
+;;
+
+#### Options from here are for general use ####
+
+t) #test model - most useful with your own models
+python3 Scripts/test_model.py -p $path -m $OPTARG
+;;
+
+a) #annotate protein
+python3 Scripts/annotate.py -p $path -m $OPTARG
+;;
+
+esac
+done
+
+
