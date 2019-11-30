@@ -38,9 +38,9 @@ def main():
 
     # ------------------------------------------------------------------------------------------------------
     # make a test dataset
-
+    print(scores.shape)
     scores, proteins, pfam, targets, ECs = create_test(scores, proteins, pfam, targets, ECs)
-
+    print(scores.shape)
     # ------------------------------------------------------------------------------------------------------
     # Remove proteins with no pfam hits - nothing happens with test set
 
@@ -53,11 +53,11 @@ def main():
     # ------------------------------------------------------------------------------------------------------
     # Remove non-enzyme proteins down to a limit
 
-    # limit = 0.2
-    #
-    # scores, proteins, targets = prep.remove_non_enzyme(scores, proteins, targets, limit)
-    #
-    # print("Percentage empty rows in target matrix after removal of empty rows down to %.2f: %.2f%%" % (limit, prep.get_empty(targets)))
+    limit = 0.2
+
+    scores, proteins, targets = prep.remove_non_enzyme(scores, proteins, targets, limit)
+
+    print("Percentage empty rows in target matrix after removal of empty rows down to %.2f: %.2f%%" % (limit, prep.get_empty(targets)))
     # ------------------------------------------------------------------------------------------------------
     # test method
     test_scores = []
@@ -66,14 +66,14 @@ def main():
         X_test, forest, y_test, proteins_test = train_forest(scores, proteins, targets, i)
         test_scores.append(th.test_model(X_test, forest, y_test, ECs))
     test_scores = np.array(test_scores)
-    print("Total mean accuracy:", mean(test_scores[:, 0]))
-    print("Total mean sensitivity:", mean(test_scores[:, 1]))
-    print("Total mean specificity:", mean(test_scores[:, 2]))
-    print("Total mean precision:", mean(test_scores[:, 3]))
+    print("Total mean accuracy:", np.mean(test_scores[:, 0]))
+    print("Total mean sensitivity:", np.mean(test_scores[:, 1]))
+    print("Total mean specificity:", np.mean(test_scores[:, 2]))
+    print("Total mean precision:", np.mean(test_scores[:, 3]))
     print("Total mean F1 score:", (2*mean(test_scores[:, 1])*mean(test_scores[:, 3])/(mean(test_scores[:, 1] + mean(test_scores[:, 3])))))
     # Output the classifier as a pickle using joblib
-    X_test, forest, y_test, proteins_test = train_forest(scores, proteins, targets, 1)
-    joblib.dump(forest, args.path + args.output)
+    # X_test, forest, y_test, proteins_test = train_forest(scores, proteins, targets, 1)
+    # joblib.dump(forest, args.path + args.output)
 
 
 # ------------------------------------------------------------------------------------------------------

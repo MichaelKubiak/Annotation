@@ -8,6 +8,7 @@ import os
 from statistics import mean, pstdev
 from paths import DATA
 import json
+import sys
 
 args = tm.arguments("nn", "nn.h5")
 proteins, pfam, scores, targets = tm.read_files(args)
@@ -30,9 +31,9 @@ for directory in os.listdir(model_file):
 
     diff = []
     for i in range(len(predictions[0])):
-        print(predictions[0][i])
-        print(y_test[i])
-        diff.append((predictions[0][i][0]-y_test[i][0])**2)
+        lowest_error = sys.maxsize
+        for value in y_test[i]:
+
     print("mean square error: %.2f +/- %.2f" % (mean(diff), pstdev(diff)))
 
 # with open(DATA + "eval_dict", "w") as eval_dict:

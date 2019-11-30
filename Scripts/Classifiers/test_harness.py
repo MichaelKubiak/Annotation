@@ -76,7 +76,7 @@ def get_metrics(pred, y_test, ECs):
     print("Mean specific precision: %.2f%%" % (100*mean(precision)))
     print("Overall accuracy: %.2f%%" % (100*get_accuracy(pred, y_test)))
 
-    return accuracy, precision, sensitivity, specificity
+    return accuracy, sensitivity, specificity, precision
 
 # -----------------------------------------------------------------------------------------------------
 # Function to predict from the test dataset

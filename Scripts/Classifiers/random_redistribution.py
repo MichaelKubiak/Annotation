@@ -7,6 +7,7 @@
 from Classifiers import prep,train_model as tm,test_harness as th
 from Classifiers.test_data import create_test
 import random
+import numpy as np
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
@@ -50,11 +51,11 @@ def main():
     # ------------------------------------------------------------------------------------------------------
     # Remove non-enzyme proteins down to a limit
 
-    # limit = 0.2
-    #
-    # scores, targets = prep.remove_non_enzyme(scores, targets, limit)
-    #
-    # print("Percentage empty rows in target matrix after removal of empty rows down to %d: %.2f%%" % (limit, prep.get_empty(targets)))
+    limit = 0.2
+
+    scores, proteins, targets = prep.remove_non_enzyme(scores, proteins, targets, limit)
+
+    print("Percentage empty rows in target matrix after removal of empty rows down to %d: %.2f%%" % (limit, prep.get_empty(targets)))
 
     #test method
     test_scores = []
@@ -63,13 +64,13 @@ def main():
         # Make learning and test datasets
         X_train, X_test, y_train, y_test, proteins_train, proteins_test = prep.train_test_split_sparse(scores,proteins,targets,test_size=0.3,random_state=i)
         test_scores.append(test_rearrange(i, y_test, ECs))
-    # test_scores = np.array(test_scores)
-    # print("Total mean accuracy:", mean(test_scores[:, 0]))
-    # print("Total mean sensitivity:", mean(test_scores[:, 1]))
-    # print("Total mean specificity:", mean(test_scores[:, 2]))
-    # print("Total mean precision:", mean(test_scores[:, 3]))
+    test_scores = np.array(test_scores)
+    print("Total mean accuracy:", np.mean(test_scores[:, 0]))
+    print("Total mean sensitivity:", np.mean(test_scores[:, 1]))
+    print("Total mean specificity:", np.mean(test_scores[:, 2]))
+    print("Total mean precision:", np.mean(test_scores[:, 3]))
     # print("Total mean F1 score:", (2*mean(test_scores[:, 1])*mean(test_scores[:, 3])/(mean(test_scores[:, 1] + mean(test_scores[:, 3])))))
-
+    print(test_scores[0])
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------

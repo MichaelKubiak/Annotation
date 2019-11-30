@@ -1,4 +1,4 @@
-\documentclass[12pt]{report}
+\documentclass[12pt]{article}
 
 \usepackage[UKenglish]{babel}
 \usepackage[margin = 1.5cm]{geometry}
@@ -8,28 +8,55 @@
 \usepackage{fancyhdr}
 \usepackage{graphicx}
 \usepackage{wrapfig}
+\usepackage{subfigure}
+\usepackage{csquotes}
 \usepackage{csvsimple}
 \pagestyle{fancyplain}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
 \fancyhfoffset[R]{0cm}
 \rhead{\fancyplain{}{mk626}}
-\lhead{\fancyplain{}{MichaelKubiak}}
+\lhead{\fancyplain{}{Michael Kubiak}}
 \setlength{\headheight}{15pt}
 \cfoot{\thepage}
+\setlength{\parindent}{0pt}
 \usepackage{xcolor}
 \usepackage{natbib}
 \setcitestyle{round}
-\setcounter{secnumdepth}{0}
 \usepackage{setspace}
 \onehalfspacing
 \usepackage[strings]{underscore}
+\usepackage{listings}
+\usepackage{url}
+\usepackage{lscape}
+\expandafter\def\expandafter\UrlBreaks\expandafter{\UrlBreaks\do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j\do\k\do\l\do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t\do\u\do\v\do\w\do\x\do\y\do\z\do\A\do\B\do\C\do\D\do\E\do\F\do\G\do\H\do\I\do\J\do\K\do\L\do\M\do\N\do\O\do\P\do\Q\do\R\do\S\do\T\do\U\do\V\do\W\do\X\do\Y\do\Z}
+\usepackage{hyperref}
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}
+            {-2.5ex\@plus -1ex \@minus -.25ex}
+            {1ex \@plus .25ex}
+            {\normalfont\normalsize\bfseries}}
+\renewcommand\subsubsection{\@startsection{subsubsection}{4}{\z@}
+            {-2.5ex\@plus -1ex \@minus -.25ex}
+            {1ex \@plus .25ex}
+            {\normalfont\large\bfseries}}
+\renewcommand\subsection{\@startsection{subsection}{4}{\z@}
+            {-2.5ex\@plus -1ex \@minus -.25ex}
+            {1ex \@plus .25ex}
+            {\normalfont\Large\bfseries}}
+\renewcommand\section{\@startsection{section}{4}{\z@}
+            {-2.5ex\@plus -1ex \@minus -.25ex}
+            {1ex \@plus .25ex}
+            {\normalfont\LARGE\bfseries}}
+\makeatother
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4} 
 
 \begin{document}
 
 	\vspace*{\fill}
 		\begin{center}
-			\huge\textbf{Title}
+			\huge\textbf{The Use of Pfam Scores for Enzyme Annotation by Machine Learning HMMS SOMETHING SOMETHING}
 
 			\vspace*{2cm}
 			
@@ -47,7 +74,8 @@
 
 	\section*{Abstract}
 		
-		
+		\subsection*{Introduction}
+		Protein annotation is a neccessary step in the analysis of organisms. It can explain how processes proceed, and how products are produced. Much of the biology community still uses 
 		
 \pagebreak
 
@@ -56,22 +84,34 @@
 \pagebreak
 
 	\section{Introduction}
+	
+	\color{red} 
+	
+	expand 1.4 somewhat - a few subheads
+	
+	\color{black}
 
 		\subsection{Functional Annotation}
 
-			Protein function annotation is a highly important stage of the analysis of genomes.  There are a number of annotation schemes that work for different sets of proteins, including Enzyme commission (EC) number, available from \cite{RefWorks:doc:5d80ae45e4b02466bec37c88}, which classifies enzymes by the reactions that they catalyse, and Gene Ontology (GO) terms (\cite{RefWorks:doc:5d80b66be4b07e3e85c92789}, \cite{RefWorks:doc:5d80b886e4b02466bec38715}), which identify and relate functions of genes and gene products (RNA and proteins) across species.  
+			Protein function annotation is a highly important stage of the analysis of genomes.  There are a number of annotation schemes that work for different sets of proteins, including Enzyme commission (EC) number, available from \cite{RefWorks:doc:5d80ae45e4b02466bec37c88}, which classifies enzymes by the reactions that they catalyse, and Gene Ontology (GO) terms (\cite{RefWorks:doc:5d80b66be4b07e3e85c92789}, \cite{RefWorks:doc:5d80b886e4b02466bec38715}), which identify and relate functions of genes and gene products (RNA and proteins) across species.
 			
-		\subsection{Enzyme Commission (EC)}
+			\subsubsection{Uses of Functional Annotation}		
+		
+			Functional annotation prediction is used as a basis for further experimentation and manual annotation, particularly of new species.  While many mammalian proteins can be identified easily based on a few homologs in closely related species, mammals are only a small section of the life that exists on the planet.  Even proteins that are easily annotated to a primary function may have other, less obvious, functions that might be ignored unless discovered by functional prediction.  Many newly discovered proteins from other branches of life do not have any close homologs that can be used to determine their function, and so are much more difficult to annotate.  These require more in-depth, time consuming methods to be performed in order to discover their functions, and so anything that reduces the time taken by those methods is very useful.  Functional prediction can be used to inform the starting points and possiblilities explored through these methods, so that, in the case of enzymes, even if a precise function cannot be determined, a particular set of reactions can be investigated as the most likely, based on the predictions made.  
+			
+		\subsection{Useful Data for Protein Annotation}  
+			
+			\subsubsection{Enzyme Commission (EC)}
 
 			The scheme used for this initial foray into function identification by machine learning will be EC numbers, due to their relatively smaller scope (only classifying enzymes).  An EC number has 4 sections, separated by dots, each of which specifies the enzyme function to a greater degree, from general reaction type down to specific substrates. For example, as can be found in \cite{RefWorks:doc:5d70e98ce4b0ef464262611a} and its supplements, an EC number of 1.2.3.4 means that (1) the enzyme is an oxidoreductase, meaning that it catalyses oxidation/reduction, (1.2) that acts on an aldehyde or oxo group (1.2.3) with oxygen as the electron acceptor for the reaction, (1.2.3.4) and that it the specific molecule that is oxidised is an oxalate molecule.  Due to their modularity, EC numbers give levels of annotation, allowing predictions to be useful even when they are not fully accurate, or do not exactly place the specifics of the later levels.
 			
-		\subsection{Pfam}
+			\subsubsection{Pfam}
 
-			Another way that proteins are classified is by homology, providing families that evolved from a common ancestor.  Pfam \citep{RefWorks:doc:5d6e641de4b0a51fb0eed90f} is a database that holds profile 'seed' alignments and hidden markov models (HMMs) for these protein families.  These can be used through programs such as HMMER \citep{RefWorks:doc:5c8f77ece4b077fbbf563f6a}, to determine the likelihood of a new protein being a member of that specific family. Proteins can be comprised of domains related to multiple families which work together to provide function.  In the case that only the best HMMer score does not lead to a function prediction, it is possible that the scores against the entire database may allow the function to be discovered.
+			Another way that proteins are classified is by homology, providing families that evolved from a common ancestor.  Pfam \citep{RefWorks:doc:5d6e641de4b0a51fb0eed90f} is a database that holds profile 'seed' alignments and hidden markov models (HMMs) for these protein families.  These can be used through programs such as HMMER \citep{RefWorks:doc:5c8f77ece4b077fbbf563f6a}, to determine the likelihood of a new protein being a member of that specific family. Proteins can be comprised of domains related to multiple families which work together to provide function.  In the case that only the best HMMER score does not lead to a function prediction, it is possible that the scores against the entire database may allow the function to be discovered.
 					
 			As shown by \cite{RefWorks:doc:5d6f9c26e4b0ec3eed182252}, which describes the program ECDomainMiner, associations between EC number and Pfam family can be identified.  These associations are useful for functional annotation, since Pfam is designed to allow identification to be done against it.  Linking Pfam domains to their most likely EC numbers, in effect allows a protein to be searched against EC numbers in order to determine the chances of that protein having a relation to any one that is related to a Pfam domain.  Rather than doing this manually, so that the EC numbers related to each family are searchable, it should be possible for a machine learning algorithm to computationally relate the domains to EC numbers, and so spot patterns that may not be initially obvious, as well as increasing the speed at which possible functions can be suggested.
 			
-		\subsection{UniProt}
+			\subsubsection{UniProt}
 		
 			Information about known proteins is stored in the "UniProt Knowledgebase" database (UniProtKB) \citep{RefWorks:doc:5d80d882e4b074875bbeabb7}.  This information includes annotations, as well as the amino acid sequences of those proteins.  UniProt itself consists of two databases, TrEMBL, which contains automatically annotated proteins that have not yet been reviewed and approved, and Swiss-Prot, which contains manually annotated and reviewed proteins.  Over time, papers manually annotating TrEMBL proteins are reviewed by a team and moved into Swiss-Prot.  This means that a piece of functional prediction software can be trained on the current Swiss-Prot database, and tested by prediction of the whole TrEMBL database, part of which prediction can be confirmed by the next release of Swiss-Prot, allowing a completely blind test. 
 			
@@ -81,7 +121,7 @@
 		
 			Machine learning is useful because it reduces the need for hard coded rules that a program must follow, and opens the possibility of finding patterns of relation that are as yet undiscovered.  The models built using machine learning provide methods of determining answers to questions that are difficult to answer in any other way.  
 		
-			One feature that increases difficulty of answering questions is the amount of data that may be related to a specific problem.  This can be seen in the size of bioinformatics datasets, which has been increasing exponentially due to improved methods of obtaining data.  When particular questions are asked this abundance of data can make finding the patterns difficult.  In the particular case of training a machine learning algorithm to annotate protein function based on HMMer searches of swissprot against pfam, the size of swissprot, along with the number of pfam families means that the relations between those and EC numbers can be difficult to discern.  Even when those relations can be found, hard coding them would be an almost impossible task, due to the time it would take.  Coding a machine learning algorithm, on the other hand, is a much shorter process.
+			One feature that increases difficulty of answering questions is the amount of data that may be related to a specific problem.  This can be seen in the size of bioinformatics datasets, which has been increasing exponentially due to improved methods of obtaining data.  When particular questions are asked this abundance of data can make finding the patterns difficult.  In the particular case of training a machine learning algorithm to annotate protein function based on HMMER searches of swissprot against pfam, the size of swissprot, along with the number of pfam families means that the relations between those and EC numbers can be difficult to discern.  Even when those relations can be found, hard coding them would be an almost impossible task, due to the time it would take.  Coding a machine learning algorithm, on the other hand, is a much shorter process.
 			
 			\subsubsection{Libraries}			
 			
@@ -91,7 +131,7 @@
 
 				Three of the most common types of supervised machine learning are random forest classification, initially suggested in \cite{RefWorks:doc:5d84b84de4b03ee47d60013e}, and first used in \cite{RefWorks:doc:5d84b954e4b01cdccc094821}, support vector machines, whose first appearance in literature is in \cite{RefWorks:doc:5d84bca0e4b074abc390dc95} and deep neural networks, which is an extension of the idea of neural networks, the mathematics of which were first proposed in \cite{RefWorks:doc:5d84d2d4e4b048bf85a1aa0a}.  
 
-		\begin{wrapfigure}{L}{0.6\textwidth}
+		\begin{wrapfigure}{l}{0.6\textwidth}
 			\centering
 			\includegraphics{random_forest.png}
 			\caption{A simple illustration of a random forest, showing how each of a number (n) of samples makes a tree that contributes to the consensus that will be reported}
@@ -102,7 +142,7 @@
 		
 				A Support vector machine (SVM) attempts to maximise the 'distance' between the decision boundary, the plane (in a plot of the data points) by which classifications are separated, and the points that it separates.  SVMs are less likely to be specific to a training dataset because the boundaries are not being designed only to separate the classes, in which case they might curve around a particular point that is somewhat of an outlier to a group, but instead to ensure that there is the greatest margin between the decision boundary and all of the points that it is separating.  In that case of non linearly separable problems, SVMs use the 'kernal trick' to transform the data to a higher dimensional space, in which it becomes linearly separable.  The choice of kernal (transformation function), as well as how strict the SVM is about incorrect classification are variable, and can be used to tune for better performance.  SVMs usually rely upon One vs All (OvA) classification, meaning that they recognise whether a sample is each possible classification in turn, rather than determining all memberships at the same time.
 		
-		\begin{wrapfigure}{R}{.6\textwidth}
+		\begin{wrapfigure}{r}{.6\textwidth}
 			\centering
 			\includegraphics{neural_network.png}
 			\caption{A simple illustration of a neural network with 3 hidden layers.  Weights are applied on the connections between nodes, and biases are applied on the nodes themselves, before functions are applied}
@@ -113,7 +153,7 @@
 		
 		\subsection{Functional Prediction in Literature}
 			
-			In many cases, functional prediction is still performed by taking the first BLAST result of a sequence.  This is a relatively arbitrary method of annotation since, due to the heuristic nature of the BLAST algorithm, repeated BLAST searchs of the same sequence very often do not produce the same first result.
+			In many cases, functional prediction is still performed by taking the first BLAST result of a sequence.  This is a relatively arbitrary method of annotation since, due to the heuristic nature of the BLAST algorithm, repeated BLAST searchs of the same sequence very often do not produce the same first result.  This leaves a space for tools that enable better prediction 
 			
 			A number of functional prediction tools have been developed.  One such approach is that described in \cite{RefWorks:doc:5d822c8ce4b07f40b9eae1b7}, which details the use of sequence similarity, as well as interaction partners of the proteins to predict its action as an enzyme.  This approach requires a good deal of experimental observation, as well as computational methods for each protein.  It builds upon previous attempts at prediction, which used only the interaction partners, and no computational methods at all.  A second example of protein function prediction is \cite{RefWorks:doc:5d822cfce4b0506e9759e8f8}, which describes using structural 'packing patterns' of amino acids that are common in specific families, but much rarer in PDB in general.  Again, this method requires experimental work, and, specifically, it requires that a structure be produced, so that the packing of amino acids can be identified. 
 		
@@ -122,38 +162,373 @@
 			The ``DeepMind'' project, funded by Google, has attempted structural prediction, rather than functional prediction, through its offshoot "AlphaFold", described in \cite{RefWorks:doc:5d89ec21e4b02d8374a7bbe7}, which used deep neural networks to predict protein folding. \cite{RefWorks:doc:5d822dd5e4b07f40b9eae2f4} also performs structural prediction, these could be thought of as less closely related to this project, but the second example, above, shows that structural information can also be used in functional prediction.  
 
 		\subsection{Prediction Competitions}
+		\label{intro:competitions}
 			
 			The two functional predictors above (AlphaFold and \cite{RefWorks:doc:5d89ec21e4b02d8374a7bbe7}) have been used as part of a group that are judged by comptetitions such as CASP (Critical Assessment of Structure Prediction), the most recent of which was CASP13 in 2018 \citep{RefWorks:doc:5d822fa4e4b0fa10423c5184}.  CASP provides teams with a set of proteins whose structures are unknown, but will be worked on experimentally once models are submitted.  Each team produces predictions based on their modelling software, and those models are graded based on their accuracy.  Its offshoot, CAFASP (Critical Assessment of Fully Automated Structure Prediction) was a similar system, except that no human input was allowed, the modelling software was uploaded to a server, and its raw output was graded.  
 		
 			CAFASP has been superceded by another competition, CAFA (Critical Assessment of protein Function Annotation) \citep{RefWorks:doc:5d82345ae4b09beeb95d60bb} whose most recent competition CAFA took place in 2018-2019.  CAFA is more relevant to this project, since the algorithms perform annotation, rather than structure prediction.  
 		
 			The purpose of all of these competitions is to assess how far the field of computational prediction has come in their areas, so that further advances can be made using techniques that iterate on the most successful.
-		
-		\subsection{Uses of Functional Annotation}		
-		
-			Functional annotation prediction is used as a basis for further experimentation and manual annotation, particularly of new species.  While many mammalian proteins can be identified easily based on a few homologs in closely related species, mammals are only a small section of the life that exists on the planet.  Even proteins that are easily annotated to a primary function may have other, less obvious, functions that might be ignored unless discovered by functional prediction.  Many newly discovered proteins from other branches of life do not have any close homologs that can be used to determine their function, and so are much more difficult to annotate.  These require more in-depth, time consuming methods to be performed in order to discover their functions, and so anything that reduces the time taken by those methods is very useful.  Functional prediction can be used to inform the starting points and possiblilities explored through these methods, so that, in the case of enzymes, even if a precise function cannot be determined, a particular set of reactions can be investigated as the most likely, based on the predictions made.  
 			
 		\subsection{Aims}
 		
-			The project will attempt to implement some of the functionality of \cite{RefWorks:doc:5d88bf0fe4b037ddf3555c0b}, but using machine learning, and allowing for multidomain proteins.  The intention is to attempt to use supervised machine learning to produce an alogrithm which annotates a protein based on its HMMER scores against the Pfam HMMs.  The learning will be done using proteins from the Swissprot database.  Since the enzymes among these have EC numbers assigned to them, those classifications can be used as targets for the algorithm to aim towards.  It is expected that a number of different supervised machine learning algorithms will be tried, starting with a random forest, and developing from there, based on success or failure of that approach, and any advice that more experienced machine learning users might provide.  The variety of attempts will allow the best implementation to be discovered. 
+			\color{red} CHECK OVER \color{black}The project will attempt to implement some of the functionality of \cite{RefWorks:doc:5d88bf0fe4b037ddf3555c0b}, but using machine learning, and allowing for multidomain proteins.  The intention is to attempt to use supervised machine learning to produce an alogrithm which annotates a protein based on its HMMER scores against the Pfam HMMs.  The learning will be done using proteins from the Swissprot database.  Since the enzymes among these have EC numbers assigned to them, those classifications can be used as targets for the algorithm to aim towards.  It is expected that a number of different supervised machine learning algorithms will be tried, starting with a random forest, and developing from there, based on success or failure of that approach, and any advice that more experienced machine learning users might provide.  The variety of attempts will allow the best implementation to be discovered. 
 		
-	\section{Methods}
+
+	\section{Methods}	
+	
+	The full method can be run using the annotate bash file (Appendix \ref{appendix:annotate}).
 		
+		\subsection{Data Retreival}
 		
+		The Swissprot database was downloaded from Uniprot \citep{RefWorks:doc:5d80d882e4b074875bbeabb7}.  Due to the rolling updates to the database the version used is now available as a part of the file at \url{ftp://ftp.uniprot.org/pub/databases/uniprot/previous_releases/release-2019_08/knowledgebase/uniprot_sprot-only2019_08.tar.gz}. The Pfam HMM database version 32.0 was also downloaded from the EBI servers.  Enyzme.dat, the file that provided known enzyme commission numbers for the proteins, was downloaded from the expasy servers.  Previous versions are not available, but the version used for this project is present on the github page.  The bash script is shown in appendix \ref{appendix:prep:download}.
+		
+		\subsection{HMMER}
+		
+		HMMER \citep{RefWorks:doc:5c8f77ece4b077fbbf563f6a} version 3.1b2 was used to generate scores for each pfam family against each swissprot protein.  It has two functions for generating scores, hmmsearch compares each HMM to the full database of sequences, while hmmscan runs each sequence against the full HMM database.  As described on \cite{RefWorks:doc:5dd3ca84e4b09fb548c836d6}, hmmsearch is the faster of the two, for large datasets, due to the much larger input/output load required for HMMScan to function.  
+		
+		The HMMER searches were done using 3 different reporting thresholds for comparison of their effects on models.  These thresholds were E-values of 10, 1, and 0.1.  All other settings were left at their default values.  The results were output as a table to allow easier parsing.
+		
+		\subsection{Preprocessing of HMMER Scores for Use in Training}
+		
+		The tables of scores were converted into a scipy \citep{RefWorks:doc:5dd556c9e4b029f578deb63c} sparse matrix, as shown in appendix \ref{appendix:prep:parse}.  The targets were also placed into a sparse matrix, this time with boolean values, due to the absolute nature of the classification.  The orders of the proteins in these two matrices were kept consistent for ease of comparison, and the orders of each axis of the two matrices was also output to file.  The creation of the target matrix was performed using appendix \ref{appendix:prep:identify}.  
+		
+		Other additional preprocessign was performed by the scripts in appendix \ref{appendix:prep:prep}.  These differ slightly dependent on the architecture of the algorithm to be used.  For the initial attempts, which used classification algorithms, this module simply provides methods with purposes like splitting sparse data into training and test sets (with a 7:3 ratio), removing unnecessary EC numbers (with no proteins), proteins with no family hits or no EC hits (although the latter are useful in smaller quantities as a testable true negative) and, later, removing duplicate proteins to improve the running time and memory usage of these algorithms.  For later attempts, which used a regression architecture, this module also provided a method to order the EC numbers, so that they could be related to values between 1 and 4940 with 0 denoting no EC number annotation.  This function then reduced the matrix to a series of lists, each of which contained the annotations for one protein.  
+		
+		\subsection{Random Assignment}
+		
+		As a baseline, a naive predictor was produced.  This predictor acts by rearranging the rows of the target matrix, to ensure that the same ratios of outcomes were produced.  This predictor is created by the module in appendix \ref{appendix:annotate:naive}.
+		
+		\subsection{Sci-kit learn}
+
+			\subsubsection{Random Forest}
+			
+			The first attempt at a machine learning classifier was a random forest, using the Scikit-learn \citep{RefWorks:doc:5d80f150e4b07f40b9eab2f8} library, since they have very few tunable variables, and so make a good starting point.  The variable with the greatest effect on the output of the forest is the number of trees that are built.  The random forest training function can be seen in appendix \ref{appendix:annotate:forest}.
+		
+		\subsection{Neural Network}
+		
+		A deep neural network was the obvious choice for a third architecture.  Some attempts were made using the Multi Layer Perceptron architecture in Scikit-learn, but it was determined that the best way to allow more input and testing flexibility was to use a slightly lower level package, Keras \citep{RefWorks:doc:5dd5e464e4b029f578dee4d2}, with a Tensorflow \citep{RefWorks:doc:5d80f20de4b08a779635c81d} backend.  This allowed more granularity in changing variables, such as hidden layer number, size and activation functions, as well as greater control of the training process.  Appendix \ref{appendix:annotate:keras} is written to train the network on a batch generator.
+		
+		\subsection{Testing}
+		\label{section:methods:testing}
+		
+			\subsubsection{Test Data Set}
+		
+			To enable easier appraisal of techniques, appendix \ref{appendix:prep:testdata} was used to produce a smaller test dataset that could be used to run an algorithm quickly.  This dataset contained only proteins that had scores against an arbitrary group of families, chosen to have exactly 10 protein hits, of which a high proportion were EC annotated.  The two files are differentiated only by their ability to process different structures of target data structures.
+
+			\subsubsection{Metrics}
+			The comparison of models requires them to be tested on a common problem.  Appendix \ref{appendix:annotate:test} provides methods of testing models against one another.  The classifier script is complete, but the regressor version is, unfortunately, still a work in progress, this means that there can be no exact comparison between the two types of method.  Regression models were simply evaluated based on their accuracy for a set random seed of 1, as well as classifying the continuous prediction by EC set (what the first 3 numbers of the annotation were, for example).
+		
+			Fairness was ensured by setting random seeds to standard values across runs, a range between 0 and 10, the values reported (for the classifiers) are the mean of these outputs, and standard deviations are reported where possible.  Usefulness of these models was determined using four metrics, accuracy, sensitivity, specificity and precision.  Accuracy was calculated for the total prediction, and all four metrics were calculated per first number of the EC (1-7).
+		
+			\paragraph{Accuracy}
+			
+			Accuracy is a measure of how close to correct each prediction is.  It is calculated by the formula:
+			\[Accuracy = \frac{Correct Predictions}{Correct Predictions + False Predictions}\]
+			
+			Correctness of a prediction was determined by the complete matrix row being identical between the target and the prediction.
+			
+			For the regression algorithm, the accuracy was calculated by the keras package \citep{RefWorks:doc:5dd5e464e4b029f578dee4d2}, from the loss calculated using the loss function (Mean Squared Error). 
+			
+			\paragraph{Sensitivity}
+			
+			Sensitivity is a measure of how well classifications are discovered, i.e. what fraction of the actual classifications are labelled correctly.  It is calculated using the formula: 
+			\[Sensitivity = \frac{True Positives}{True Positives + False Negatives}\]
+			
+			\paragraph{Specificity}
+			\label{section:methods:specificity}
+			
+			Specificity is a measure of how well negative classifications are made, i.e. what fraction of proteins that should not be annotated with a specific classification are not annotated in that way.  Unfortunately, this metric is less useful for data with many negatives in the targets, such as the target matrix used in classification, as they will get very high percentage specificities.  The formula for specificity is:
+			\[Specificity = \frac{True Negatives}{True Negatives + False Positives}\]
+			
+			\paragraph{Precision}
+			
+			Precision is a measure of how likely a classification is to be true, i.e. what fraction of the classifications predicted are correct. It is calculated as:
+			\[Precision = \frac{True Positives}{True Positives + False Positives}\]
+			
 		
 	\section{Results}
+	
+		\subsection{Data Analysis}
+
+		\color{red}
+		
+		more specifics - descriptives - most hits to a hmm etc.
 		
 		
+		\color{black}
+		
+		Data analysis is important to improve understanding of the dataset that is being worked with.  These results will be discussed in the results section due to their bearing on how the rest of the project proceeded.
+		
+			\subsubsection{Pfam Frequencies}
+			
+			\begin{figure}[p]
+				\subfigure[]{\includegraphics[width=0.5\textwidth]{hmm\string_freq\string_10.png}}
+				\subfigure[]{\includegraphics[width=0.5\textwidth]{hmm\string_ratios\string_10.png}}
 				
-	\section{Conclusion}
+				\subfigure[]{\includegraphics[width=0.5\textwidth]{hmm\string_freq\string_1.png}}
+				\subfigure[]{\includegraphics[width=0.5\textwidth]{hmm\string_ratios\string_1.png}}
+
+				\subfigure[]{\includegraphics[width=0.5\textwidth]{{hmm\string_freq\string_0.1}.png}}
+				\subfigure[]{\includegraphics[width=0.5\textwidth]{{hmm\string_ratios\string_0.1}.png}}
+				\caption{Histograms showing the effect of changing E-value cutoffs on frequency of numbers of HMM hits, as well as enzyme/non-enzyme ratios of HMM hits for HMMER cutoffs of E-value = a/b) 10, c/d) 1 and e/f) 0.1.  As can be seen in a), c) and e), the distribution of hits shifts greatly towards the lower end with increasingly stringent cutoffs, but there are a still number of highly promiscuous HMMs with large numbers of hits.  In b), d) and f), it can be seen that the ratios tend to become more extreme for more stringent cutoffs, with the central bars (both enzyme and non-enzyme for the same family) reducing in frequency, while the only enzyme and only non-enzyme bars grow}
+				\label{figure:freq}	
+			\end{figure}
+			
+			Figure \ref{figure:freq} shows how the use of different cutoffs impacts upon the distribution of hits of hidden markov models (a, c and e) and the ratio of enzyme to non-enzyme hits of those HMMs (b, d and f).  This figure shows that there is a great difference in the data that is obtained with different cutoff values, and so suggests that attempting machine learning on the different datasets may give different results. How those results differ could give an insight into whether that information is true, or just false negatives generated by overgeneralising the family models.
+			It was also possible that a good enough model would implement its own stringent cutoff on the data through the learning process, and so end up producing the same results for two datasets with different cutoffs.
+			
+			\paragraph{Coverage of Swissprot by Pfam HMMs}
+			
+			As can be seen from the histograms in in figure \ref{figure:freq} parts a), c) and e), the distribution of hits per HMM are spread across a large range, from 0 to 15772 hits for the least stringent e-value cutoff of 10. This highly hit model is PF13191.6, which is a family of enzymes containing an AAA ATPase domain, as can be discovered from the Pfam website at \url{http://pfam.xfam.org/family/pf13191.6}. As an ATPase family, it would be expected to be quite common, due to how commonly used ATP is as an energy transporter.  The number of hits for this family reduces to 11923 for the e-value 1 cutoff, and to 7389 (less than half of the initial) for the most stringent cutoff.  This large reduction in number of hits means that PF13191.6 is no longer the most hit family.  For the e-value 0.1 cutoff, that becomes PF01926.23, with 9097 hits (12181 at e-value 10).  This family contains ribosome GTPases, another type of enzyme that is neccessary for life, due to the ubiquity of RNA, which the ribosome synthesises using, among other molecules, GTP.
+			
+			The mean numbers of hits per HMM are 123 ($\sigma = 470$), 96 ($\sigma = 373$) and 77 ($\sigma = 294$) for e-value cutoffs of 10, 1 and 0.1 respectively.  The shift towards lower numbers of hits demonstrated by this reduction of the mean is also shown through the change in distribution between the histograms. The distribution changes from a more normal distribution to a more uniform one, at least for lower numbers of hits, such as the 0 bar, where the number of HMMs increases roughly 20-fold between a cutoff of 10 and a cutoff of 0.1.  
+			
+			\paragraph{Enzyme Ratios of Pfam HMMs}
+			
+			Again, the differences between the cutoffs is visible in figure \ref{figure:freq} parts b), d) and f), especially at the lowest ratio ($<10^{-3}$), where the value reduces to 0 for the most stringent cutoffs.  There is also a marked decrease in the central bars, from the high thousands to roughly 1000, and a corresponding increase in the bars that denote only one type of protein.  This suggests that many of the families are segregated between enzyme and non-enzyme, but that the less stringent cutoffs cause the inclusion of some enzymes in non-enzyme families, and \textit{vice versa}.
+						
+			\subsubsection{Swissprot Statistics}
+			
+			\begin{wrapfigure}{r}{0.5\textwidth}
+			\includegraphics[scale=0.6]{ECs\string_per\string_protein.png}
+			\caption{Plot showing the distribution of numbers of EC annotations per protein.  Many proteins have a few EC annotations, but it rapidly falls off at higher numbers}		
+			\label{figure:protEC}
+			\end{wrapfigure}
+			
+			Figure \ref{figure:protEC} shows that there are many more proteins with 0 or 1 annotations than there are with more (more than 10x), meaning that an architecture that predicts only one annotation per protein can be almost as good as one that predicts more, especially if the almost identical EC numbers that make up many of the higher annotation counts are taken into account.
+			
+			The protein with the most EC annotations (a total of 9) is a maize protein, (E)-beta-farnesene synthase, which has a group of functions that are involved in the syntheses of a set of molecules from (2E, 6E)-farnesyl diphosphate, information about which is available from \cite{RefWorks:doc:5ddc6d45e4b09d547997f032}.  As this protein acts upon only one substrate, it is likely that any other proteins that perform this set of functions, which would be very uncommon, would have these other functions discovered upon validation of any prediction by an experimental method.
+			
+			It was also determined that 59.16\% of the dataset was non-enzyme proteins, which are useful as a true negative, but could lead to a fully negative predictor getting a much higher accuracy than it deserved.  The number of these proteins was reduced to below 20\% to avoid this complication.		
+			 
+		\subsection{Architecture Outcomes}
 		
+			\subsubsection{Random Assignment}
+
+			The random assignment model had an accuracy of 0.10\% ($\sigma = 0.05$) on the full dataset and, for comparison with the random forest, 0.56\% ($\sigma = 1.18$) with the test dataset.  For the other metrics, since they have not been calculated for the neural network, only the test dataset values are reported here, with the full dataset values in appendix \ref{appendix:results:class}.  The mean sensitivity across sets of EC numbers was 0.65\% ($\sigma = 1.45)\%$, the mean specificity was 99.55\% ($\sigma = 0.02$) and the mean precision was 0.65\% ($\sigma = 0.5$).
+			
+			\subsubsection{Random Forest}
+
+			The most accurate type of random forest that could be generated had an accuracy of 41.45\% ($\sigma = 12.17$) on the test dataset.  The sensitivity was 47.62\% ($\sigma = 14.17$), specificity was 99.81\% ($\sigma = 0.03$), and precision was 56.18\% ($\sigma = 13.50$). Unfortunately, random forests do not scale well in terms of time or memory complexity, and running this architecture for the full dataset would have required a very large amount of both.
+			
+			The tuning that was possible for this architecture was in the number of trees which are built, and so the number of estimators from which the consensus was gathered, (for the case above, a value of 1000 estimators was used) and in the allowed depth of the trees.  These are both variables that would have to be tuned for the size of dataset that would be used.  As for random assignment, full results, including results separated by first EC number are shown in appendix \ref{appendix:results:class}.
+			
+			\subsubsection{Neural Networks}
+
+			The neural networks produced had accuracies of roughly 55\% when trained on the full dataset (values displayed in \ref{table:network}), but only 18\% on the test dataset.  These values were only slightly different dependent upon the shape of the network.  A set of network shapes were tested, but only produced slightly different values, within one percent of one another, so more testing would be needed to determine which, if any, variables could have a greater impact upon the quality of the network.
+			
+	\section{Discussion}
+	
+		\subsection{Comparisons}
+			
+			\subsubsection{Random Assignment Method}
+			
+			As was expected, the completely random method of prediction performed very poorly, with the exception of the specificity, which, as stated in the methods section (specifically section \ref{section:methods:specificity}) is a less useful metric for this type of prediction, due to the large number of negatives that will always cause artificial inflation of the specificity unless the prediction contains many false positive predictions.  The random assignment method performed worse on the full dataset than the test dataset, which, again, is as expected, since there was a smaller probability that the values \enquote{predicted} would be correct by chance.
 		
+			\subsubsection{Random Forest}
+			
+			The random forest performed much better than the random assignment on all useful metrics.  Unfortunately, this method was not realistically scalable with the time and technology that was available.  Given a large enough compute cluster and enough time, this method could of course be tested to a better degree.  If an annotation program were to use it, however, the end user would not be likely to have such a cluster to hand, and so could not update the model for a newer version of the databases.
+			
+			Random forests could be a good way of predicting outcomes from a smaller amount of data, but is unlikely to be useful for any task with as large a dataset as the one used here.
+			
+			\subsubsection{Neural Network}
+			
+			The neural networks produced were much less accurate on the test dataset than the random forest (although they were still better than the random assignment method).  Unfortunately, as stated in the methods (section \ref{section:methods:testing}) other metrics are not yet available for the neural network, and so it cannot be compared on those.
+			
+			The neural networks were much faster to run, and had far lower ram costs than the random forest, and so were much easier to train.
+			
+		\subsection{Classification vs Regression}
+
+		It is not known how well the test dataset models the full dataset, but the fact that the neural network performed better on the full dataset implies that other learning algorithms would perform better there also.  This suggests that the random forest would be quite likely to have a higher accuracy on the full dataset than the neural network.  One possible reason for the increased accuracy of the random forest was the type of output.  The idea to use regression for the problem instead was worth testing, since it greatly reduced the size of output from the model, but it also enabled a slight drift from the correct value to place the output in a completely different category than the true annotation. Classification is expected to provide the best results for this type of problem, but as with all conclusions reached, this is subject to further experimentation.
 		
-	\section{Future Application}
+		\subsection{Conclusion}
 		
+		Due to the (likely) better accuracy of the random forest, and the better resource use of the neural network, it is believed that a classification neural network would prove to be the best method for a program of the type being developed (the most efficient for the highest accuracy).  More work is required on this algorithm, but if completed, it could be very useful to any group attempting novel protein annotation.
+		
+		\subsection{Future Work}			
+			
+			\subsubsection{Testing}
+			
+			For better, more scientific comparison between architectures, methods to obtain all metrics should be implemented.  This would be particularly important when comparing between regression and classification methods.
+			
+			Specificity might be turned into a more useful metric by only including proteins that had no true classifications in the calculation, rather than taking each value in the matrix and making a comparison. 
+			
+			As a final test, once the program is complete, it should be tested in a completely blind way, submission to a competition such as those mentioned in the introduction (in section \ref{intro:competitions}), or by training on the current version of Swissprot, and testing on the new annotations in the next version.
+			
+			\subsubsection{Model Improvements and Further Experimentation}
+			
+			As stated above, it is believed that a classification neural network would perform best, and so the development of such a network should be a priority.
+			
+			It is probable that the regression network built previously is not optimal, and so more experimentation should be performed.  It is also possible that a network with multiple regression outputs, such as one per first digit in the EC, would provide a more useful network.
+			
+			All neural network experimentation should include close scrutiny of all possible variables, which includes finer changes in shape, such as having differing numbers of nodes in different hidden layers, but also activation functions, number of training epochs, size of training batches, as well as others.
+			
+			\subsubsection{Increasing Scope}
+			
+			While EC number is a useful classification system, it only provides annotations for one part of the spectrum of proteins. Incluing other annotations systems, such as GO, would allow the tool to be more flexible. This could take one of two forms, one large model, which determines all of the annotations for a particular protein, or two smaller models that could be run together or separately, depending on the wishes of the user.  It is likely that the second option would be most time and memory efficient, but the single network might produce better results, due to links between different annotation systems. 
+
+			\subsubsection{Improving Accessibility}
+		
+			Completing the program in such a way that it was useful to scientists annotating real proteins would of course be the natural conclusion to the project.  This could be acheived by producing a fully functional local version, using a server to run queries, or both, with the local version available if a more specialised model or a quicker result was required by a team with resources to build their own models.
+			
+	\pagebreak
 	
 	\fancypagestyle{plain}{}
 	\bibliography{export.bib}{}
 	\bibliographystyle{myplainnat}
+	
+	\pagebreak	
+	
+	\newcommand{\github}[1]{\url{www.github.com/michaelkubiak/annotation/#1}}
+	\newcommand{\githubScripts}[1]{\github{tree/master/Scripts/#1}}
+	\huge\bf{Appendices}\normalsize
+	\appendix
+		\section{Annotation}
+		\label{appendix:annotate}
+		\github{blob/master/annotate}
+			
+		\subsection{Models}
+			\subsubsection{Naive Predictor}
+			\label{appendix:annotate:naive}
+			\githubScripts{Classifiers/random\string_redistribution.py}
+			
+			\subsubsection{Random Forest}
+			\label{appendix:annotate:forest}
+			\githubScripts{Classifiers/forest.py}
+			
+			\subsubsection{Support Vector Machine}
+			\label{appendix:annotate:SVM}
+			\githubScripts{Regressors/svm.py}
+			
+			\subsubsection{Neural Network}
+			\label{appendix:annotate:keras}
+			\githubScripts{Regressors/tf\string_neural\string_network.py}
+			
+		\subsection{Testing}
+		\label{appendix:annotate:test}
+		\githubScripts{Classifiers/test\string_harness.py}
+		
+		\githubScripts{Regressors/test\string_harness.py}
+	
+	\section{Data Preparation}
+		\subsection{Download Files}	
+		\label{appendix:prep:download}
+		\githubScripts{get\string_data}
+		
+		\subsection{Preprocessing}
+			\subsubsection{Parsing}
+			\label{appendix:prep:parse}
+				
+			\githubScripts{parse\string_results.py}
+			
+			\subsubsection{Identification}
+			\label{appendix:prep:identify}
+				
+			\githubScripts{identify.py}
+			
+			\subsubsection{Preparation}
+			\label{appendix:prep:prep}
+			\githubScripts{Classifiers/prep.py}
+			
+			\githubScripts{Regressors/prep.py}
+			
+			\subsubsection{Test Data}
+			\label{appendix:prep:testdata}
+			\githubScripts{Classifiers/test\string_data.py}
+			
+			\githubScripts{Regressors/test\string_data.py}
+	
+	
+	\section{Results}
+	
+		
+		\begin{landscape}
+		
+		\subsection{Classification}
+		
+		\label{appendix:results:class}
+		
+		\begin{tabular}{|c|c||c||c|c|c|c|}
+			\hline
+			Model Type&Dataset (proteinsxHMMs)&EC Group
+			&Accuracy\% ($\sigma$)&Sensitivity\% ($\sigma$)&Specificity\% ($\sigma$)&Precision\% ($\sigma$)\\
+			
+			\hline
+			&&All&0.56 (1.18)&0.65 (1.45)&99.55 (0.19)&0.65 (1.45)\\
+			\cline{3-7}
+			&&1.x.x.x&0.74 (1.14)&0.80 (1.38)&99.60 (0.05)&0.80 (1.38)\\
+			\cline{3-7}
+			&&2.x.x.x&1.13 (0.88)&1.50 (1.53)&99.56 (0.03)&1.50 (1.53)\\
+			\cline{3-7}
+			&Test (996x101)&3.x.x.x&0.73 (0.82)&0.80 (0.89)&99.56 (0.03)&0.80 (0.89)\\
+			\cline{3-7}
+			&&4.x.x.x&0.32 (0.97)&0.66 (2.00)&99.71 (0.08)&0.67 (2.00)\\
+			\cline{3-7}
+			&&5.x.x.x&0.00 (0.00)&0.00 (0.00)&99.52 (0.14)&0.00 (0.00)\\
+			\cline{3-7}
+			&&6.x.x.x&0.26 (0.77)&0.13 (0.40)&99.67 (0.05)&0.13 (0.40)\\
+			\cline{3-7}
+			Random&&7.x.x.x&0.71 (2.14)&0.66 (2.00)&99.19 (0.21)&0.66 (2.00)\\
+			\cline{2-7}
+			Assignment&&All&0.10 (0.05)&0.03 (0.03)&99.98 (0.01)&0.03 (0.03)\\
+			\cline{3-7}
+			&&1.x.x.x&0.05 (0.01)&0.01 (0.01)&99.99 (2.20)&0.01 (0.01)\\
+			\cline{3-7}
+			&&2.x.x.x&0.12 (0.02)&0.03 (0.01)&99.98 (0.00)&0.03 (0.01)\\
+			\cline{3-7}
+			&Full (560,000x17,929)&3.x.x.x&0.09 (0.01)&0.02 (0.00)&99.98 (0.00)&0.02 (0.00)\\
+			\cline{3-7}
+			&&4.x.x.x&0.07 (0.02)&0.02 (0.01)&99.99 (0.00)&0.02 (0.01)\\
+			\cline{3-7}
+			&&5.x.x.x&0.08 (0.03)&0.03 (0.02)&99.98 (0.00)&0.03 (0.02)\\
+			\cline{3-7}
+			&&6.x.x.x&0.11 (0.03)&0.07 (0.03)&99.95 (0.00)&0.07 (0.03)\\
+			\cline{3-7}
+			&&7.x.x.x&0.18 (0.07)&0.04 (0.03)&99.98 (0.00)&0.04 (0.03)\\
+			\hline
+			\hline
+			&&All&41.43 (12.17)&47.62 (14.17)&99.81 (0.10)&56.18 (13.50)\\
+			\cline{3-7}
+			&&1.x.x.x&49.62 (5.78)&50.13 (8.14)&99.87 (0.03)&62.92 (5.17)\\
+			\cline{3-7}
+			&&2.x.x.x&44.21 (4.34)&46.77 (3.97)&99.82 (0.05)&53.89 (7.27)\\
+			\cline{3-7}
+			Random&Test (996x101)&3.x.x.x&48.83 (6.28)&52.71 (4.90)&99.85 (0.03)&60.47 (7.72)\\
+			\cline{3-7}
+			Forest&&4.x.x.x&26.59 (15.22)&27.52 (10.70)&99.86 (0.07)&40.25 (15.89)\\
+			\cline{3-7}
+			&&5.x.x.x&31.37 (10.36)&47.75 (15.56)&99.74 (0.11)&55.09 (15.02)\\
+			\cline{3-7}
+			&&6.x.x.x&42.84 (6.55)&5.84 (6.13)&99.86 (0.05)&54.97 (10.04)\\
+			\cline{3-7}
+			&&7.x.x.x&46.55 (10.04)&57.64 (18.89)&99.69 (0.12)&65.69 (11.92)\\
+			\hline
+			
+			
+		\end{tabular}
+		\end{landscape}
+		
+		\subsection{Regressors (Neural Networks)}
+		
+		\label{appendix:results:networks}
+		
+		\begin{tabular}{|c|c||c|}
+		\hline
+		Number of Hidden Layers&Number of Nodes per Hidden Layer&Accuracy\%\\
+		\hline
+		5&1000&57.0\\
+		\hline
+		5&4000&57.3\\
+		\hline
+		5&8000&57.1\\
+		\hline
+		5&12000&57.5\\
+		\hline
+		10&8000&53.6\\
+		\hline
+		
+		\end{tabular}
+				
 
 \end{document}

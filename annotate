@@ -17,7 +17,7 @@ path=$OPTARG
 
 d) #download files
 echo downloading files
-get_data
+Scripts/get_data -P $path
 ;;
 
 m) #run swissprot against models and parse the output

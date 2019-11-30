@@ -1,8 +1,21 @@
 #!/usr/bin/env bash
 
-mkdir -p ~/Annotation/Data
+path=$(pwd)/Data
+while getopts hP: option
+do
+case "${option}"
+in
+h) #help
+echo -P defines the directory into which the files should be downloaded, the default is ./Data/
+exit
+;;
+P) #set data path
+path = $OPTARG
+;;
 
-cd ~/Annotation/Data
+mkdir -p $path
+
+cd $path
 
 wget -N ftp://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.gz
 gzip -fd Pfam-A.hmm.gz

@@ -7,6 +7,7 @@ from Regressors import test_harness as th
 import numpy as np
 import tensorflow as tf
 from scipy.sparse import vstack
+import math
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -51,11 +52,11 @@ def train_network(scores, targets, random_state, n_hidden, n_nodes, activations,
 # ------------------------------------------------------------------------------------------------------
 # Function to generate a data-target batch of the correct size
 
-def generate_batch(X_train, y_train, batch_size, epochs=1, random_state=0):
+def generate_batch(X_train, y_train, batch_size, epochs=1, random_state=0, keep_duplicate=True):
     # generate a new set of data for each epoch
     for i in range(epochs):
         # generate the correct number of batches for the dataset
-        for j in range(round(X_train.shape[0]/batch_size)):
+        for j in range(math.ceil(X_train.shape[0]/batch_size)):
             # rearrange the training dataset and targets
             X_rearr, y_rearr = prep.rearrange(X_train, y_train, random_state+i)
             # create the batches
@@ -65,7 +66,7 @@ def generate_batch(X_train, y_train, batch_size, epochs=1, random_state=0):
             for protein in range(len(y_batch)):
                 if len(y_batch[protein]) > 1:
                     for EC in range(len(y_batch[protein])):
-                        if EC != 0:
+                        if EC != 0 and keep_duplicate:
                             # Duplicate that row of matrix at the bottom of the matrix
                             X_batch = vstack((X_batch, X_batch[protein]))
                             # add the EC to the end of y_batch

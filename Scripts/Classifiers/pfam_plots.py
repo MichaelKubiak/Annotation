@@ -129,21 +129,21 @@ def main():
     # Read in files
 
     # Load matrix from .npz file
-    scores_t = sparse.load_npz(DATA + "score_matrix_1.npz").transpose()
+    scores_t = sparse.load_npz(DATA + "score_matrix.npz").transpose()
 
-    with open(DATA + "matrix_columns_1") as pfam_file:
+    with open(DATA + "matrix_columns") as pfam_file:
         pfam = pfam_file.readlines()
 
     # Strip newlines from the end of list members
     pfam = list(map(str.strip, pfam))
 
-    targets = sparse.load_npz(DATA + "target_matrix_1.npz")
+    targets = sparse.load_npz(DATA + "target_matrix.npz")
 
     # ------------------------------------------------------------------------------------------------------
     # Plot Pfam HMM frequency plot
 
     hits = get_hits(scores_t)
-    plot_frequencies(2, "log", "Number of Hits", "Number of Pfam Hidden Markov Models ($log_{10}$)", hits=hits)
+    plot_frequencies(2, "log", "Number of Hits", "Number of Pfam Hidden \nMarkov Models ($log_{10}$)", hits=hits)
 
     # ------------------------------------------------------------------------------------------------------
     # Plot Pfam HMM ratio frequency plot
@@ -152,7 +152,7 @@ def main():
 
     nohits, nonenzyme, ratios, enzyme = get_ratios(indices, targets)
 
-    plot_frequencies(10, "log", "Ratio of Enzyme to Non-Enzyme Hits", "Number of Pfam Hidden Markov Models ($log_{10}$)",
+    plot_frequencies(10, "log", "Ratio of Enzyme to Non-Enzyme Hits", "Number of Pfam Hidden \nMarkov Models ($log_{10}$)",
                      enzyme=enzyme, nonEnzyme=nonenzyme, ratios=ratios)
 
 
