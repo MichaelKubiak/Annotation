@@ -1,4 +1,4 @@
-# A module to build a neural network classifier with tensorflow
+# A module to build a neural network regressor with tensorflow
 # ------------------------------------------------------------------------------------------------------
 # Imports
 
@@ -12,7 +12,7 @@ import math
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
-# Function to train a neural network classifier
+# Function to train a neural network regressor
 
 def train_network(scores, targets, random_state, n_hidden, n_nodes, activations, n_epochs, batch_size, ECs):
 
