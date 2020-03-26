@@ -15,29 +15,28 @@ def train_test_split(targets, test_size,  prev_class, level=0, random_state=0):
     else:
         current = range(len(targets))
 
-    pairs = rearrange(targets, current, level, random_state)
+    shuffle = rearrange(current, random_state)
 
-    pairs_train = pairs[round(len(current)*test_size):]
-    pairs_test = pairs[:round(len(current)*test_size)]
+    train = shuffle[round(len(current)*test_size):]
+    test = shuffle[:round(len(current)*test_size)]
 
-    return pairs_train, pairs_test
+    return train, test
 
 
 # ------------------------------------------------------------------------------------------------------
 # Function to rearrange the data and targets
 
-def rearrange(targets, current, level, random_state):
+def rearrange(current, random_state):
 
-    # create tuples of (matrix row number, classification)
-    pairs = []
-    for i in range(len(targets)) and current:
-        for target in targets[i].split("\t"):
-            pairs.append((i, target.split(".")[level]))
-
-    # randomly rearrange the tuples in the list
-    rearr = list(range(len(pairs)))
+    rearr = list(range(len(current)))
     random.seed(random_state)
     random.shuffle(rearr)
-    pairs_shuffle = [pairs[i] for i in rearr]
+    return [current[x] for x in rearr]
 
-    return pairs_shuffle
+
+# ------------------------------------------------------------------------------------------------------
+# Function to get the current level of each classification
+
+def get_level(targets, level):
+
+    return ["\t".join([num.split(".")[level] for num in nums]) for nums in [target.split("\t") for target in targets]]
