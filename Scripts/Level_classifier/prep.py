@@ -20,7 +20,8 @@ def train_test_split(targets, test_size,  prev_class, level=0, random_state=0):
     train = shuffle[round(len(current)*test_size):]
     test = shuffle[:round(len(current)*test_size)]
 
-    return train, test
+    unique_targets = set([target.split(".")[level] for group in [target_set.split("\t") for target_set in [targets[x] for x in current]] for target in group])
+    return train, test, unique_targets
 
 
 # ------------------------------------------------------------------------------------------------------

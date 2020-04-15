@@ -12,16 +12,16 @@ import tensorflow as tf
 
 def train_level(data, targets, level, n_hidden, n_nodes, activations, prev_class="None", random_state=0):
 
-    X_train, X_test, y_train, y_test = prep.train_test_split(data, targets, prev_class, level, random_state)
+    train, test, unique_targets = prep.train_test_split(targets, prev_class, level, random_state)
 
     # find number of input features
-    n_features = X_train.shape[1]
+    n_features = len(train)
 
     # set numpy and tensorflow seeds
     np.random.seed(random_state)
     tf.random.set_seed(random_state)
 
-     # if only one number of nodes or activation function is given, multiply it by the number of hidden layers so that all hidden layers have those values
+    # if only one number of nodes or activation function is given, multiply it by the number of hidden layers so that all hidden layers have those values
     if n_hidden != 1:
         if type(n_nodes) is int:
             n_nodes = [n_nodes] * n_hidden
@@ -36,4 +36,4 @@ def train_level(data, targets, level, n_hidden, n_nodes, activations, prev_class
     for i in range(1, n_hidden):
         nn.add(tf.keras.layers.Dense(n_nodes[i], activation=activations[i]))
     # add the output layer with as many nodes as there are classifications
-    nn.add()
+    nn.add(tf.keras.layers.Dense())
