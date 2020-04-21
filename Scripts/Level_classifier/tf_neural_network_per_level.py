@@ -61,7 +61,13 @@ def generate_batch(data, targets, level, train, batch_size, epochs=1, random_sta
             # create the batches
             X_batch = [data[x] for x in train_rearr[j*batch_size:(j+1)*batch_size]]
             # print([targets[x] for x in train_rearr[j*batch_size:(j+1)*batch_size]])
-            y_batch = [EC for target in [targets[x] for x in train_rearr[j*batch_size:(j+1)*batch_size]] for EC in [ECs for ECs in target.split("\t")]]
+            y_batch = []
+            for x in train_rearr[j*batch_size:(j+1*batch_size)]:
+                EC = []
+                for target in targets[x].split("\t"):
+                    EC.append(target.split(".")[level])
+                y_batch.append("\t".join(EC))
+            # y_batch = [EC for target in [targets[x].split("\t") for x in train_rearr[j*batch_size:(j+1)*batch_size]] for EC in [ECs for ECs in target.split(".")[level]]]
             # for protein in range(len(y_batch)):
             #     if len(y_batch[protein]) > 1:
             #         protein_ECs = y_batch[protein].split("\t")
